@@ -1,243 +1,243 @@
 # Whet Benchmark
 
-**O Whet Benchmark mede quanto um LLM consegue afiar um prompt mal-escrito sem destruir a intenção original.** É uma habilidade central da categoria de prompt-engineering-by-LLM (DSPy, OPRO, PRewrite, PromptWizard, meta-prompting) que nenhum benchmark público avalia diretamente — MMLU mede conhecimento, HumanEval mede código, needle-in-haystack mede atenção em contexto longo, τ-bench mede comportamento agentic. *Meta-prompt-following sob pressão pra preservar intenção* é um buraco, e o Whet Benchmark existe pra preenchê-lo.
+**The Whet Benchmark measures how well an LLM can sharpen a poorly-written prompt without destroying the original intent.** It's a core skill in the prompt-engineering-by-LLM category (DSPy, OPRO, PRewrite, PromptWizard, meta-prompting) that no public benchmark evaluates directly — MMLU measures knowledge, HumanEval measures code, needle-in-haystack measures attention in long context, τ-bench measures agentic behavior. *Meta-prompt-following under pressure to preserve intent* is a gap, and the Whet Benchmark exists to fill it.
 
-A forma operacional disso é um delta. Para cada par (prompt × provider):
+The operational form is a delta. For each pair (prompt × provider):
 
 ```
-scoreBefore  ──►  [modelo recebe meta-prompt de reescrita]  ──►  scoreAfter
-     (linter diagnostica)                                         (linter re-diagnostica)
-                        Δ = scoreAfter − scoreBefore
+scoreBefore  ──►  [model receives a rewrite meta-prompt]  ──►  scoreAfter
+     (linter diagnoses)                                         (linter re-diagnoses)
+                       Δ = scoreAfter − scoreBefore
 ```
 
-Δ é o que o benchmark mede. Δ alto e estável em múltiplos modelos = os padrões que o linter cataloga são reais e transferíveis. Δ baixo ou ruidoso = o modelo falhou em seguir uma meta-instrução sem descartar propósito — e isso é exatamente o sinal que queremos capturar.
+Δ is what the benchmark measures. High and stable Δ across multiple models = the patterns the linter catalogs are real and transferable. Low or noisy Δ = the model failed to follow a meta-instruction without dropping purpose — and that's exactly the signal we want to capture.
 
-## O que o Whet Benchmark mede de fato
+## What the Whet Benchmark actually measures
 
-Quatro eixos, nenhum medido publicamente por outros benchmarks:
+Four axes, none of them measured publicly by other benchmarks:
 
-**1. Instruction-following sob meta-instrução adversarial.** O modelo recebe uma ordem que pede pra reescrever **um segundo texto** (o prompt original do usuário) aplicando mudanças específicas sem destruir a intenção. Isso coloca o modelo em tensão tripla: obedecer a meta-instrução, respeitar o propósito do alvo, e resistir ao instinto default de "ser prestativo" reformulando liberalmente. É uma configuração que nenhum dataset público avalia — e é exatamente a configuração em que ferramentas de prompt optimization por LLM vivem.
+**1. Instruction-following under adversarial meta-instruction.** The model receives an order asking it to rewrite **a second piece of text** (the user's original prompt) applying specific changes without destroying the intent. That puts the model in triple tension: obey the meta-instruction, respect the target's purpose, and resist the default instinct to "be helpful" by reformulating liberally. It's a setup no public dataset evaluates — and it's exactly the setup where prompt-optimization-by-LLM tools live.
 
-**2. Preservação de intenção sob pressão pra mudar.** O instinto default de qualquer LLM moderno quando pedem pra "melhorar" um texto é reescrever com liberdade — adicionar caveats, suavizar tom, inflar estrutura. O meta-prompt de reescrita pede o oposto: mude o necessário, preserve o resto. Quanto o modelo consegue resistir ao próprio treinamento RLHF é uma pergunta não-trivial e pouco estudada. O Δ é proxy direto disso.
+**2. Intent preservation under pressure to change.** The default instinct of any modern LLM asked to "improve" a text is to rewrite freely — add caveats, soften tone, inflate structure. The rewrite meta-prompt asks the opposite: change what's needed, preserve the rest. How well a model can resist its own RLHF training is a non-trivial, under-studied question. Δ is a direct proxy for it.
 
-**3. Delta quantificável no mesmo instrumento.** Score antes → score depois, mesma régua determinística, mesma base de 12 padrões. A maioria das avaliações de reescrita de prompt usa julgamento humano ou LLM-as-judge — caros, lentos, ruidosos. Whet Benchmark substitui isso por uma régua reproduzível em segundos por qualquer um, com corpus rotativo e runner open.
+**3. Quantifiable delta on a single instrument.** Score before → score after, the same deterministic ruler, the same 12-pattern base. Most evaluations of prompt rewriting use human judgment or LLM-as-judge — expensive, slow, noisy. The Whet Benchmark replaces that with a ruler anyone can reproduce in seconds, with a rotating corpus and an open runner.
 
-**4. Duas amostragens complementares.** Corpus rotativo (12 prompts frescos por run, 4 perfis × 3 idiomas, cobrindo as 12 regras do linter a cada run, sem repetir prompts entre runs) dá breadth ecológica. Live ranking (rolling 30 dias, chamadas reais de usuários) dá distribuição orgânica. Juntos triangulam: corpus responde *"generaliza de verdade?"* e live responde *"sobrevive ao mundo real?"*. Não são "duas faces"; são **dois eixos independentes da mesma pergunta**.
+**4. Two complementary samplings.** A rotating corpus (12 fresh prompts per run, 4 profiles × 3 languages, covering all 12 linter rules each run, never repeating prompts across runs) gives ecological breadth. The live ranking (rolling 30 days, real user calls) gives organic distribution. Together they triangulate: the corpus answers *"does it actually generalize?"* and live answers *"does it survive the real world?"*. They aren't "two faces" — they're **two independent axes of the same question**.
 
-## Por que isso importa agora
+## Why this matters now
 
-O campo de prompt-optimization-by-LLM está explodindo — DSPy, OPRO, PromptWizard, PRewrite, e todas as variantes de meta-prompting acadêmico. Todos esses sistemas assumem, como pressuposto silencioso, que LLMs conseguem reescrever prompts preservando intenção. Nenhum deles avalia esse pressuposto diretamente. A avaliação segue ad hoc: julgamento humano pontual, LLM-as-judge com prompts artesanais, ou métricas downstream específicas da task.
+The prompt-optimization-by-LLM field is exploding — DSPy, OPRO, PromptWizard, PRewrite, and every variant of academic meta-prompting. All of these systems assume, as a silent premise, that LLMs can rewrite prompts while preserving intent. None of them evaluates that premise directly. Evaluation stays ad hoc: spot-check human judgment, LLM-as-judge with hand-crafted prompts, or task-specific downstream metrics.
 
-O Whet Benchmark é o pedaço que está faltando: uma avaliação direta, reproduzível, cross-model, do pressuposto central da categoria inteira.
+The Whet Benchmark is the missing piece: a direct, reproducible, cross-model evaluation of the central premise of the entire category.
 
-## O que este benchmark NÃO é
+## What this benchmark is NOT
 
-A honestidade aqui não é rodapé, é parte do design. Benchmarks que não declaram o que não medem são os que ninguém usa.
+Honesty here isn't a footnote — it's part of the design. Benchmarks that don't declare what they don't measure are the ones nobody uses.
 
-- **Não é uma medida geral de capacidade do LLM.** Um modelo pode ser ótimo em reescrita de prompt e ruim em raciocínio, e vice-versa. O Whet Benchmark é ortogonal aos benchmarks tradicionais, não substituto.
-- **Não mede qualidade absoluta do output.** Mede a redução de padrões catalogados pelas 12 regras do linter. Qualidade absoluta requer julgamento humano ou task-level downstream evaluation — caminhos complementares, não substitutos.
-- **Não é independente do linter.** O scorer e o diagnóstico compartilham as mesmas 12 regras por design — não por descuido. A defesa dessa escolha tem três pernas: (a) as regras são codificação de failure modes observados empiricamente, não construções arbitrárias; (b) cada regra é validada independentemente via **agentes cegos** no workflow `rule-evaluation` (prompts de teste submetidos a LLMs que nunca viram o sistema, olhando se o padrão catalogado de fato degrada comportamento); (c) o corpus e o runner são públicos, versionados e contestáveis — qualquer um pode rodar, discordar, aditar regras, publicar contra-medida. Se você discorda das regras, discorda do instrumento inteiro — não só do benchmark.
-- **Não é estático.** O corpus rotaciona a cada run — prompts nunca repetem. O texto de cada prompt fica arquivado no campo `prompts` da run em `results.json` (mapa `promptId → { text, lang }`), permitindo backfill de providers adicionados depois. `schemaVersion` sinaliza mudanças estruturais no formato do corpus, não no conteúdo.
-- **Não mede variabilidade temporal suficientemente.** Uma única run é sinal, não verdade. Prática recomendada: 2-3 runs, olhar média, tratar variância como parte do dado.
+- **Not a general LLM capability score.** A model can be great at prompt rewriting and bad at reasoning, and vice versa. The Whet Benchmark is orthogonal to traditional benchmarks, not a substitute.
+- **Not a measure of absolute output quality.** It measures the reduction of patterns cataloged by the 12 linter rules. Absolute quality requires human judgment or task-level downstream evaluation — complementary paths, not substitutes.
+- **Not independent of the linter.** The scorer and the diagnostic share the same 12 rules by design, not by oversight. The defense for that choice has three legs: (a) the rules encode empirically observed failure modes, not arbitrary constructions; (b) each rule is independently validated via **blind agents** in the `rule-evaluation` workflow (test prompts submitted to LLMs that have never seen the system, checking whether the cataloged pattern actually degrades behavior); (c) the corpus and the runner are public, versioned, and contestable — anyone can run, disagree, propose new rules, publish counter-evidence. Disagreeing with the rules means disagreeing with the entire instrument — not just with the benchmark.
+- **Not static.** The corpus rotates each run — prompts never repeat. The text of every prompt is archived in the run's `prompts` field in `results.json` (mapping `promptId → { text, lang }`), enabling backfill of providers added later. `schemaVersion` flags structural changes to the corpus format, not to its content.
+- **Doesn't measure temporal variability sufficiently.** A single run is signal, not truth. Recommended practice: 2-3 runs, look at the average, treat variance as part of the data.
 
-## Estrutura
+## Structure
 
 ```
 whorl/benchmark/
-├── corpus.json                      ← prompts da próxima run (12 prompts frescos: 4 perfis × 3 idiomas, cobrindo as 12 regras do linter, rotacionados a cada run)
+├── corpus.json                      ← prompts for the next run (12 fresh prompts: 4 profiles × 3 languages, covering all 12 linter rules, rotated each run)
 ├── providers/
 │   ├── gemini.js                    Google Gemini (free tier, AI Studio)
 │   ├── mistral.js                   Mistral (free tier, La Plateforme)
-│   ├── groq.js                      Llama 3.3 70B via Groq (free tier diário)
-│   ├── deepseek.js                  DeepSeek V3 (pay-as-you-go, top-up mínimo $2)
-│   ├── deepseek-r1.js               DeepSeek R1 reasoner (mesma chave do V3)
+│   ├── groq.js                      Llama 3.3 70B via Groq (daily free tier)
+│   ├── deepseek.js                  DeepSeek V3 (pay-as-you-go, $2 minimum top-up)
+│   ├── deepseek-r1.js               DeepSeek R1 reasoner (same key as V3)
 │   ├── claude.js                    Claude Opus via CLI subprocess (subscription)
 │   ├── claude-sonnet.js             Claude Sonnet via CLI subprocess (--model sonnet)
 │   ├── ai21.js                      AI21 Jamba Large 1.7 (trial)
-│   ├── cohere.js                    Cohere Command A (trial 1000 req/mês, sem cartão)
-│   ├── openai.js                    OpenAI GPT-4o mini (pay-as-you-go, top-up mínimo $5)
+│   ├── cohere.js                    Cohere Command A (1000 req/month trial, no credit card)
+│   ├── openai.js                    OpenAI GPT-4o mini (pay-as-you-go, $5 minimum top-up)
 │   ├── openai-gpt-5-4.js            OpenAI GPT-5.4 flagship (pay-as-you-go)
-│   ├── openai-gpt-5-5.js            OpenAI GPT-5.5 (reasoning-by-default, lançado 23/04/2026 — dobro do preço do 5.4)
+│   ├── openai-gpt-5-5.js            OpenAI GPT-5.5 (reasoning-by-default, released 2026-04-23 — twice the price of 5.4)
 │   ├── openai-gpt-5-nano.js         OpenAI GPT-5 nano — reasoning tier, `max_completion_tokens`
-│   └── grok.js                      xAI Grok 4.20 Reasoning (standby — desregistrado no runner)
-├── runner.js                        Orquestrador — itera corpus × providers
-├── merge-retry.js                   Utilitário: mescla Run retry parcial na Run anterior
-├── results.json                     Histórico de rodadas (persistido, commitado)
-├── live-ranking-YYYY-MM.jsonl       Amostras do ranking ao vivo (alimentado por /api/rewrite, gitignored)
-├── PROVIDERS-BACKLOG.md             Candidatos a integração futura (informal, provisório)
-└── README.md                        Este arquivo
+│   └── grok.js                      xAI Grok 4.20 Reasoning (standby — unregistered in the runner)
+├── runner.js                        Orchestrator — iterates corpus × providers
+├── merge-retry.js                   Utility: merges a partial retry Run into the previous Run
+├── results.json                     Round history (persisted, committed)
+├── live-ranking-YYYY-MM.jsonl       Live ranking samples (fed by /api/rewrite, gitignored)
+├── PROVIDERS-BACKLOG.md             Future integration candidates (informal, provisional)
+└── README.md                        This file
 ```
 
-## Dois eixos complementares
+## Two complementary axes
 
-- **Corpus** (este documento, `results.json`): rigoroso, *same-input dentro de cada run*, rodado via `runner.js` sobre um set de 12 prompts frescos que cobre as 12 regras do linter. **Prompts nunca repetem entre runs** — o ranking reflete generalização real, não aderência a um set fixo. O ranking público é o **aggregate cumulativo de todas as runs**, deduplicado por prompt×provider (resultado mais recente ganha). Audiência: auditoria, pesquisa, citação externa. Visível em `/whet-benchmark` (aba default).
-- **Ao vivo** (`live-ranking-*.jsonl`, `src/lib/live-ranking.ts`): coleta passiva das chamadas reais de `/api/rewrite` feitas por usuários do site. Persiste apenas `{providerId, scoreBefore, scoreAfter, delta, elapsedMs, success, timestamp}` — **nunca o texto do prompt**. Responde *"sobrevive ao mundo real?"*. Audiência: quem quer escolher um provider pra usar. Visível em `/whet-benchmark?tab=live` e alimenta o Podium da landing. Não é same-input (o rotator LRU distribui carga), então só vira comparável em escala (N > algumas centenas por provider).
+- **Corpus** (this document, `results.json`): rigorous, *same-input within each run*, executed via `runner.js` against a set of 12 fresh prompts that cover all 12 linter rules. **Prompts never repeat across runs** — the ranking reflects actual generalization, not adherence to a fixed set. The public ranking is the **cumulative aggregate of every run**, deduplicated by prompt×provider (most recent result wins). Audience: audit, research, external citation. Visible at `/whet-benchmark` (default tab).
+- **Live** (`live-ranking-*.jsonl`, `src/lib/live-ranking.ts`): passive collection of real `/api/rewrite` calls made by site users. Persists only `{providerId, scoreBefore, scoreAfter, delta, elapsedMs, success, timestamp}` — **never the prompt text**. Answers *"does it survive the real world?"*. Audience: someone picking a provider to use. Visible at `/whet-benchmark?tab=live` and feeds the landing podium. Not same-input (the LRU rotator distributes load), so it only becomes comparable at scale (N > a few hundred per provider).
 
-Um provider pode dominar no Corpus (prompts curados) e perder no Ao Vivo (prompts reais desestruturados) — esse tipo de divergência é o achado mais interessante que o sistema pode gerar, e é o que justifica manter os dois eixos vivos.
+A provider can dominate the Corpus (curated prompts) and lose Live (real, unstructured prompts) — that kind of divergence is the most interesting finding the system can produce, and it's why both axes stay live.
 
-## Como funciona cada run
+## How each run works
 
-Para cada par (prompt × provider):
+For every (prompt × provider) pair:
 
-1. **Analyze input:** `analyze(prompt)` → `scoreBefore` + `metaPrompt` (output do renderer — texto auto-contido com prompt original + adequações sugeridas + instrução de formato; o destinatário é um LLM que vai reescrever o prompt original seguindo essas adequações).
-2. **Submit:** `provider.submit(metaPrompt)` — o modelo recebe o meta-prompt de reescrita e devolve o prompt reescrito.
+1. **Analyze input:** `analyze(prompt)` → `scoreBefore` + `metaPrompt` (renderer output — a self-contained text including the original prompt, the suggested adjustments, and a format instruction; the recipient is an LLM that will rewrite the original prompt following those adjustments).
+2. **Submit:** `provider.submit(metaPrompt)` — the model receives the rewrite meta-prompt and returns the rewritten prompt.
 3. **Analyze output:** `analyze(rewritten)` → `scoreAfter`.
-4. **Delta:** `scoreAfter − scoreBefore` — quanto o modelo conseguiu afiar o prompt seguindo as adequações sem destruir a intenção.
+4. **Delta:** `scoreAfter − scoreBefore` — how well the model sharpened the prompt under the adjustments without destroying the intent.
 
-Cada run grava em `results.json` com: timestamp, corpus version, mapa de prompts (`promptId → { text, lang }`) e resultados por provider (scores antes/depois, diagnósticos, tempo de resposta, preview do texto reescrito, e — se houve erro — a mensagem).
+Every run writes to `results.json` with: timestamp, corpus version, prompt map (`promptId → { text, lang }`) and per-provider results (before/after scores, diagnostics, response time, preview of the rewritten text, and — if errored — the error message).
 
-## Corpus rotativo
+## Rotating corpus
 
-O corpus **não é fixo** — a cada run, um novo set de 12 prompts é crafted e todos os providers rodam sobre ele. Prompts usados em runs anteriores **nunca repetem**. Isso mede generalização real em vez de aderência a um set memorizado.
+The corpus is **not fixed** — each run, a fresh set of 12 prompts is crafted and every provider runs against it. Prompts used in previous runs **never repeat**. That measures actual generalization rather than adherence to a memorized set.
 
-### Composição por run
+### Composition per run
 
-12 prompts: **4 perfis × 3 idiomas** (pt, en, es). Os 4 perfis são desenhados pra, em conjunto, **acionar todas as regras ativas do linter a cada run** — nenhuma regra fica sub-representada por design. Hoje o linter tem 12 regras e os 4 perfis bastam; se novas regras forem adicionadas, a composição deve evoluir (ver subseção "Evolução do corpus quando regras novas são adicionadas" abaixo).
+12 prompts: **4 profiles × 3 languages** (pt, en, es). The 4 profiles are designed so that, together, they **trigger every active linter rule each run** — no rule stays under-represented by design. The linter currently has 12 rules and the 4 profiles suffice; if new rules are added, the composition has to evolve (see "Corpus evolution when new rules are added" below).
 
-| Slot | Perfil de anti-pattern | Regras-alvo principais | Tipo de prompt |
+| Slot | Anti-pattern profile | Primary target rules | Prompt type |
 |---|---|---|---|
-| A | Imperativo + defaults + densidade | `imperative-overload`, `redundant-default`, `cognitive-overload` | System prompt corporativo rígido |
-| B | Vaguidão + repetição + comando seco | `vague-instruction`, `redundant-repetition`, `command-over-question` | Prompt "genérico bem-intencionado" |
-| C | Contradição + domínio sensível | `contradiction`, `tone-domain-mismatch` | Instrução com tensões internas em área regulada (saúde, direito, finanças, etc.) |
-| D | Motivacional tóxico + referências externas | `threat-framing`, `role-inflation`, `conditional-reward`, `unresolved-reference` | Prompt "hypeado" — ameaças condicionais, inflação de credenciais, promessas de recompensa e/ou menções a anexos fantasmas |
+| A | Imperative + defaults + density | `imperative-overload`, `redundant-default`, `cognitive-overload` | Rigid corporate system prompt |
+| B | Vagueness + repetition + bare commands | `vague-instruction`, `redundant-repetition`, `command-over-question` | "Generic well-meaning" prompt |
+| C | Contradiction + sensitive domain | `contradiction`, `tone-domain-mismatch` | Instruction with internal tension in a regulated area (health, law, finance, etc.) |
+| D | Toxic motivational + external references | `threat-framing`, `role-inflation`, `conditional-reward`, `unresolved-reference` | "Hyped" prompt — conditional threats, credential inflation, reward promises and/or mentions of phantom attachments |
 
-**Regras-alvo** são o mínimo garantido do perfil. Outras regras podem disparar naturalmente (ex: `cognitive-overload` em B quando o prompt fica longo) — isso é desejável. O importante é que, somando os 12 prompts, **toda regra ativa do linter tenha pelo menos um disparo na run**. Para o perfil D, a trinca pt/en/es deve distribuir as 4 regras-alvo de forma que **cada uma apareça em pelo menos um dos 3 prompts do perfil**.
+**Target rules** are the profile's guaranteed minimum. Other rules may fire naturally (e.g. `cognitive-overload` in B when the prompt gets long) — that's desirable. What matters is that, summing the 12 prompts, **every active linter rule has at least one trigger in the run**. For profile D, the pt/en/es triplet should distribute the 4 target rules so that **each one shows up in at least one of the profile's 3 prompts**.
 
-Os **domínios** (jurídico, saúde, marketing, educação, engenharia, finanças, etc.) **rotacionam** — nenhum domínio repete em runs consecutivas. O pool de domínios disponíveis é o mesmo que o renderer detecta (~20 domínios).
+The **domains** (legal, health, marketing, education, engineering, finance, etc.) **rotate** — no domain repeats across consecutive runs. The pool of available domains matches what the renderer detects (~20 domains).
 
-> **Importante:** a crafting de cada um dos 12 prompts é **obrigatoriamente** feita por um sub-agente cego, dispachado sem acesso ao código das regras, regex ou corpus histórico. Detalhes operacionais, rationale e rastreabilidade em ["Quem crafta os prompts"](#quem-crafta-os-prompts) abaixo.
+> **Important:** the crafting of each of the 12 prompts is **mandatorily** done by a blind sub-agent, dispatched without access to rule code, regex, or historical corpus. Operational details, rationale, and traceability in ["Who crafts the prompts"](#who-crafts-the-prompts) below.
 
-### Evolução do corpus quando regras novas são adicionadas
+### Corpus evolution when new rules are added
 
-O conjunto de regras do linter não é congelado — regras podem ser adicionadas conforme novos failure modes forem observados e validados (ver *Critérios para existência de uma regra* no README principal). Quando isso acontece, a composição do corpus **precisa evoluir junto**. O invariante é simples:
+The set of linter rules isn't frozen — rules can be added when new failure modes are observed and validated (see *Criteria for the existence of a rule* in the main README). When that happens, the corpus composition **must evolve in step**. The invariant is simple:
 
-> **Toda regra ativa do linter deve ter pelo menos um disparo garantido por run.**
+> **Every active linter rule must have at least one guaranteed trigger per run.**
 
-Quando uma regra nova entra em produção, antes da próxima run o responsável pelo benchmark deve decidir — e registrar no commit — qual das três rotas abaixo foi escolhida:
+When a new rule enters production, before the next run the benchmark owner must decide — and record in the commit — which of the three routes below was chosen:
 
-- **Rota A — Absorver em perfil existente.** Se a regra nova é afim ao eixo de um dos perfis (ex: uma regra sobre "tom performático" conversa com o eixo motivacional do perfil D), adicioná-la como regra-alvo daquele perfil e ajustar o crafting pra que a trinca pt/en/es garanta o disparo.
-- **Rota B — Criar perfil novo.** Se a regra nova cobre um eixo independente dos 4 atuais, criar um perfil E (depois F, G...) — 15, 18, 21 prompts por run conforme necessário. Custo proporcional de tokens/tempo aceito como investimento de breadth.
-- **Rota C — Desativar a regra do benchmark.** Se uma regra é muito rara pra ser sintetizada de forma realista, ou se o critério de existência da própria regra está em revisão, declarar explicitamente que ela está fora do invariante temporariamente. Sai do invariante = sai do design garantido; volta a ser medida apenas oportunisticamente.
+- **Route A — Absorb into an existing profile.** If the new rule is adjacent to one of the profile axes (e.g. a rule about "performative tone" sits next to profile D's motivational axis), add it as a target rule for that profile and adjust the crafting so the pt/en/es triplet guarantees the trigger.
+- **Route B — Create a new profile.** If the new rule covers an axis independent of the current 4, create a profile E (then F, G...) — 15, 18, 21 prompts per run as needed. Proportional cost in tokens/time accepted as a breadth investment.
+- **Route C — Disable the rule from the benchmark.** If a rule is too rare to be synthesized realistically, or if the rule's existence criteria are themselves under review, declare explicitly that it's outside the invariant temporarily. Out of the invariant = out of the guaranteed design; it falls back to opportunistic measurement.
 
-A tabela de perfis na seção acima é uma fotografia do estado atual (12 regras → 4 perfis), não um contrato permanente. Sempre que as regras do linter mudarem (adição, remoção, fusão), esta seção e a tabela devem ser atualizadas na mesma PR.
+The profile table above is a snapshot of the current state (12 rules → 4 profiles), not a permanent contract. Whenever the linter rules change (additions, removals, mergers), this section and the table must be updated in the same PR.
 
-### Critérios de qualidade por prompt
+### Per-prompt quality criteria
 
-Cada prompt do corpus deve atender a todos estes critérios:
+Every corpus prompt must meet all of these:
 
-- **Tamanho entre 500 e 1000 caracteres** (~80-160 palavras) — piso garante densidade pra disparar ≥3 regras e realismo de system prompt de produção; teto evita esbarrar em limites dos providers gratuitos e medir contexto longo em vez de meta-prompt-following.
-- **Score antes entre 0-79** — muito alto não tem o que corrigir. Scores muito baixos (até 0) são stress-tests legítimos: medem se o modelo consegue afiar um prompt catastrófico sem destruir a intenção. O que importa é que a intenção continue identificável.
-- **Dispara no mínimo 3 regras distintas** — garante que o meta-prompt de reescrita tem trabalho real a fazer. Exceção aceitável: prompts cirúrgicos do perfil D focados em uma regra rara (ex: `conditional-reward` puro) podem disparar só 1-2 regras, desde que o restante da trinca D cubra as outras regras-alvo.
-- **Propósito identificável** — a reescrita deve preservar uma intenção clara (o teste silencioso de preservação)
-- **Realista** — algo que um usuário de verdade escreveria, não um prompt construído pra falhar artificialmente
-- **Autocontido — exceto no perfil D**, onde `unresolved-reference` é regra-alvo e menções a documentos/anexos externos são o ponto. Nos outros perfis, prompts devem ser autocontidos pra não disparar `unresolved-reference` artificialmente
+- **Size between 500 and 1000 characters** (~80-160 words) — the floor guarantees enough density to trigger ≥3 rules and realism for a production system prompt; the ceiling avoids hitting free-tier limits and accidentally measuring long-context capacity rather than meta-prompt-following.
+- **Score before between 0-79** — too high and there's nothing to fix. Very low scores (down to 0) are legitimate stress tests: they measure whether the model can sharpen a catastrophic prompt without destroying the intent. What matters is that the intent stays identifiable.
+- **Triggers at least 3 distinct rules** — guarantees the rewrite meta-prompt has real work to do. Acceptable exception: surgical profile-D prompts focused on a rare rule (e.g. pure `conditional-reward`) may trigger only 1-2 rules, provided the rest of the D triplet covers the other target rules.
+- **Identifiable purpose** — the rewrite must preserve a clear intent (the silent preservation test).
+- **Realistic** — something a real user would write, not a prompt constructed to fail artificially.
+- **Self-contained — except for profile D**, where `unresolved-reference` is a target rule and mentions of external documents/attachments are the point. In other profiles, prompts must be self-contained so they don't trigger `unresolved-reference` artificially.
 
-### Rotação de domínios
+### Domain rotation
 
-Antes de craftar prompts pra uma nova run, verificar quais domínios foram usados nas runs recentes (olhar `results.json`). Priorizar domínios menos usados recentemente (LRU). O objetivo é que, ao longo de 5-6 runs, o benchmark tenha coberto a maioria dos ~20 domínios que o renderer reconhece.
+Before crafting prompts for a new run, check which domains were used in recent runs (look at `results.json`). Prioritize domains used less recently (LRU). The goal is that, over 5-6 runs, the benchmark covers most of the ~20 domains the renderer recognizes.
 
-### Agregação pro ranking
+### Aggregation for the ranking
 
-**Dentro de cada run:** same-input — todos os providers recebem os mesmos 12 prompts. Comparação direta entre modelos é válida.
+**Within each run:** same-input — every provider receives the same 12 prompts. Direct comparison between models is valid.
 
-**Entre runs:** o ranking público é **cumulativo** — todas as runs de toda a história entram na agregação. Quando o mesmo prompt aparece em mais de uma run pra um provider, só o **resultado mais recente** é usado (deduplicação por `promptId` × `provider`). O sample count mostrado no leaderboard é o número de prompts distintos cobertos — todos os providers devem ter o mesmo número. Cada nova run com 12 prompts inéditos enriquece o aggregate, que cresce indefinidamente.
+**Across runs:** the public ranking is **cumulative** — every run in the history feeds the aggregation. When the same prompt appears in more than one run for a provider, only the **most recent result** is used (deduplication by `promptId` × `provider`). The sample count shown on the leaderboard is the number of distinct prompts covered — every provider should have the same number. Each new run with 12 fresh prompts enriches the aggregate, which grows indefinitely.
 
 ```
-  Run N   (23/04):  12 prompts frescos (veterinária, jornalismo, design, saúde)
-  Run N+1 (30/04):  12 prompts frescos (engenharia, cinema, agricultura, marketing)
-  Run N+2 (07/05):  12 prompts frescos (direito, finanças, arquitetura, energia)
+  Run N   (Apr 23):  12 fresh prompts (veterinary, journalism, design, health)
+  Run N+1 (Apr 30):  12 fresh prompts (engineering, film, agriculture, marketing)
+  Run N+2 (May 07):  12 fresh prompts (law, finance, architecture, energy)
 
-Ranking = média cumulativa (36 prompts distintos, resultado mais recente de cada)
+Ranking = cumulative average (36 distinct prompts, most recent result for each)
 ```
 
-### Quem crafta os prompts
+### Who crafts the prompts
 
-**Regra obrigatória:** todo prompt novo do corpus é craftado por um **sub-agente cego** — dispachado sem acesso ao código das regras (`src/core/rules/*.ts`), aos regex, ao texto do linter, ou ao histórico do corpus. **Um dispatch por slot: 12 sub-agentes independentes** para os 12 prompts da run. Não vale o orquestrador (Claude na sessão) craftar os prompts por conta própria.
+**Mandatory rule:** every new corpus prompt is crafted by a **blind sub-agent** — dispatched without access to rule code (`src/core/rules/*.ts`), regex, linter text, or historical corpus. **One dispatch per slot: 12 independent sub-agents** for the 12 prompts in a run. The orchestrator (Claude in the session) doesn't get to craft prompts on its own.
 
-**Por que é obrigatório.** Quando quem conhece os regex das regras crafta os prompts, o corpus colapsa pra "mínimo múltiplo comum que dispara os regex" — prompts sintéticos que batem as regras por construção, não por realismo. O resultado é um benchmark que mede "capacidade de aderir a um padrão idiossincrático" em vez de "capacidade de afiar prompts reais preservando intenção". O crafting cego fecha esse vazamento. Realismo é condição de validade, não luxo.
+**Why it's mandatory.** When the person who knows the rule regex crafts the prompts, the corpus collapses to "lowest common multiple that triggers the regex" — synthetic prompts that hit the rules by construction, not by realism. The result is a benchmark that measures "ability to follow an idiosyncratic pattern" rather than "ability to sharpen real prompts while preserving intent". Blind crafting closes that leak. Realism is a validity condition, not a luxury.
 
-**Como opera o dispatch.** O orquestrador prepara um brief por slot contendo apenas:
+**How the dispatch works.** The orchestrator prepares a brief per slot containing only:
 
-- **Idioma** (pt, en ou es) e **perfil** do anti-pattern (ex: "imperativo pesado + redundância de defaults")
-- **Regras-alvo descritas em linguagem natural, sem regex** (ex: "instruções que repetem comportamento default do modelo", "excesso de tom imperativo categórico"). Nunca colar regex nem citar arquivos de regra
-- **Domínio sugerido** (rotativo via LRU sobre runs anteriores, evitando domínios recém-usados)
-- **Critérios de realismo:** algo que um usuário de verdade escreveria, não prompt construído pra falhar artificialmente
-- **Score antes desejado:** entre 0-79
-- **Tamanho do prompt:** entre 500 e 1000 caracteres (~80-160 palavras)
-- **Mínimo de regras disparadas:** ≥3 (exceções declaradas para o perfil D focado em regras raras)
+- **Language** (pt, en, or es) and **profile** of the anti-pattern (e.g. "heavy imperatives + redundant defaults").
+- **Target rules described in natural language, no regex** (e.g. "instructions that repeat the model's default behavior", "excess of categorical imperative tone"). Never paste regex or cite rule files.
+- **Suggested domain** (rotating LRU over previous runs, avoiding recently-used domains).
+- **Realism criteria:** something a real user would write, not a prompt constructed to fail artificially.
+- **Desired before-score:** between 0-79.
+- **Prompt size:** between 500 and 1000 characters (~80-160 words).
+- **Minimum rules triggered:** ≥3 (declared exceptions for profile D focused on rare rules).
 
-O brief **nunca inclui**: código/regex de regras, trechos de `src/core/rules/*.ts`, textos de prompts do corpus histórico, nem lista dos padrões linguísticos que o linter procura. O sub-agente escreve o prompt do jeito que acha natural pra o domínio e o perfil.
+The brief **never includes:** rule code/regex, snippets of `src/core/rules/*.ts`, historical corpus prompts, or a list of the linguistic patterns the linter looks for. The sub-agent writes the prompt the way it finds natural for the domain and profile.
 
-**Validação pós-dispatch.** O orquestrador recebe o prompt gerado, roda `analyze()` (via `dist/core/analyzer.js`) e checa: score em 0-79, regras-alvo acionadas, cobertura agregada da run. Se alguma regra-alvo falhou, dispara **outro sub-agente cego** com feedback em linguagem natural sobre o comportamento que faltou (ex: *"o prompt precisa conter uma ameaça condicional — algo tipo 'se você errar, consequências graves X acontecerão'"*) — ainda sem expor regex nem apontar o arquivo da regra. Repete até passar pela validação ou o sub-agente sinalizar que não consegue atender sem ferir realismo.
+**Post-dispatch validation.** The orchestrator gets the generated prompt back, runs `analyze()` (via `dist/core/analyzer.js`) and checks: score in 0-79, target rules triggered, run-level coverage. If a target rule is missed, the orchestrator dispatches **another blind sub-agent** with feedback in natural language about the missing behavior (e.g. *"the prompt needs to contain a conditional threat — something like 'if you fail, serious consequence X will happen'"*) — still without exposing regex or pointing at the rule file. Repeats until the validation passes or the sub-agent flags it can't satisfy without breaking realism.
 
-**Infraestrutura.** O `Agent` tool dinâmico do Claude Code basta — **não é necessário criar `.claude/agents/` nem scripts persistentes**. Cada run dispara sub-agentes on-demand via o próprio CLI. Pré-requisito: `npm run build:cli` antes de validar (o analyzer roda do `dist/`).
+**Infrastructure.** Claude Code's dynamic `Agent` tool is enough — **no need to create `.claude/agents/` or persistent scripts**. Each run dispatches sub-agents on demand via the CLI itself. Prerequisite: `npm run build:cli` before validation (the analyzer runs from `dist/`).
 
-**Rastreabilidade no commit da run.** O commit que substitui `corpus.json` deve declarar: (a) que os prompts foram craftados por sub-agentes cegos conforme esta seção; (b) quantas iterações por slot até passar na validação; (c) se alguma regra-alvo foi relaxada por falta de crafting viável. Isso preserva a auditabilidade do método.
+**Run-commit traceability.** The commit replacing `corpus.json` must declare: (a) that the prompts were crafted by blind sub-agents per this section; (b) how many iterations per slot until validation passed; (c) whether any target rule was relaxed for lack of viable crafting. That preserves the auditability of the method.
 
-## Chaves de API
+## API keys
 
-Configure em `.env.local` (não commitado):
+Configure in `.env.local` (not committed):
 
 ```bash
-# Gemini — https://aistudio.google.com/app/apikey (free, mais generoso)
+# Gemini — https://aistudio.google.com/app/apikey (free, most generous)
 GEMINI_API_KEY=...
 
-# Mistral — https://console.mistral.ai/api-keys (free tier "Experiment")
+# Mistral — https://console.mistral.ai/api-keys ("Experiment" free tier)
 MISTRAL_API_KEY=...
 
-# Groq — https://console.groq.com/keys (free tier diário)
+# Groq — https://console.groq.com/keys (daily free tier)
 GROQ_API_KEY=...
 
-# DeepSeek — https://platform.deepseek.com (exige top-up mínimo de $2, ver nota abaixo)
+# DeepSeek — https://platform.deepseek.com (requires $2 minimum top-up, see note below)
 DEEPSEEK_API_KEY=...
 
-# AI21 — https://studio.ai21.com (trial $10, 3 meses, sem cartão)
+# AI21 — https://studio.ai21.com ($10 trial, 3 months, no credit card)
 AI21_API_KEY=...
 
-# Cohere — https://dashboard.cohere.com (trial 1000 req/mês, sem cartão, sem expirar)
+# Cohere — https://dashboard.cohere.com (1000 req/month trial, no credit card, no expiry)
 COHERE_API_KEY=...
 
-# OpenAI — https://platform.openai.com (pay-as-you-go, cartão + top-up $5 mínimo)
+# OpenAI — https://platform.openai.com (pay-as-you-go, card + $5 minimum top-up)
 OPENAI_API_KEY=...
 
-# xAI Grok — https://console.x.ai (⏸️ standby — ver PROVIDERS-BACKLOG.md)
+# xAI Grok — https://console.x.ai (⏸️ standby — see PROVIDERS-BACKLOG.md)
 XAI_API_KEY=...
 ```
 
-**Claude não precisa de chave** — usa `claude --print` como subprocesso, aproveitando a subscription Claude Code já paga.
+**Claude doesn't need a key** — uses `claude --print` as a subprocess, riding the existing Claude Code subscription.
 
-**DeepSeek não é mais free tier.** O backlog original afirmava "5M tokens grátis na criação de conta, sem cartão" — essa política foi desativada silenciosamente em algum ponto de 2025. Hoje a primeira chamada de uma conta nova devolve `HTTP 402 Insufficient Balance` e exige top-up mínimo de **$2 USD** (via PayPal, cartão, Alipay ou WeChat) em [`platform.deepseek.com/top_up`](https://platform.deepseek.com/top_up). Com o preço atual (`$0.28/1M` input, `$0.42/1M` output, idênticos pra V3 e R1), $2 cobrem ordem de ~70 rodadas completas do corpus só de V3, ou ~20 rodadas rodando V3+R1 juntos — ou seja, custo irrisório, mas não é mais "zero fricção". A mesma chave atende `deepseek-chat` e `deepseek-reasoner`.
+**DeepSeek isn't a free tier anymore.** The original backlog claimed "5M free tokens on signup, no card" — that policy was silently retired at some point in 2025. Today a new account's first call returns `HTTP 402 Insufficient Balance` and requires a **$2 USD** minimum top-up (via PayPal, card, Alipay or WeChat) at [`platform.deepseek.com/top_up`](https://platform.deepseek.com/top_up). At current pricing (`$0.28/1M` input, `$0.42/1M` output, identical for V3 and R1), $2 covers around ~70 full corpus rounds for V3 alone, or ~20 rounds running V3+R1 together — so the cost is trivial, but it's no longer "zero friction". The same key serves `deepseek-chat` and `deepseek-reasoner`.
 
-Providers sem chave configurada são **silenciosamente pulados**, não falham o run. Com nenhum provider disponível, o runner sai com erro.
+Providers without a configured key are **silently skipped**, not failing the run. With no available providers, the runner exits with an error.
 
-## Comandos
+## Commands
 
 ```bash
-# Build obrigatório antes — o runner importa dist/core/analyzer
+# Required build first — the runner imports dist/core/analyzer
 npm run build:cli
 
-# Todos os providers disponíveis × todos os prompts
+# All available providers × all prompts
 node whorl/benchmark/runner.js
 
-# Preview sem chamar APIs
+# Preview without calling APIs
 node whorl/benchmark/runner.js --dry-run
 
-# Subset de providers
+# Provider subset
 node whorl/benchmark/runner.js --providers=gemini,claude-cli
 
-# Subset de prompts (IDs vêm do corpus atual — ver whorl/benchmark/corpus.json)
+# Prompt subset (IDs come from the current corpus — see whorl/benchmark/corpus.json)
 node whorl/benchmark/runner.js --prompts=corporate-counsel-pt,clinical-nurse-intake-en
 
-# Combinar
+# Combine
 node whorl/benchmark/runner.js --providers=gemini --prompts=corporate-counsel-pt
 ```
 
-### Backfill de provider novo
+### Backfilling a new provider
 
-Quando um provider é integrado depois de runs já existentes, ele começa com cobertura menor que os outros. Para equalizar, o fluxo é rodar o provider sobre os corpus históricos arquivados em `results.json`.
+When a provider is integrated after runs already exist, it starts with less coverage than the others. To equalize, the flow is to run the provider against the historical corpora archived in `results.json`.
 
 ```bash
-# Script de backfill — extrai prompts de runs anteriores e roda o provider sobre eles
+# Backfill script — extracts prompts from previous runs and runs the provider against them
 node -e "
 const fs = require('fs');
 const r = JSON.parse(fs.readFileSync('whorl/benchmark/results.json', 'utf8'));
@@ -250,33 +250,33 @@ const missing = r.runs
 const unique = [...new Map(missing.map(p => [p.id, p])).values()];
 const corpus = { schemaVersion: r.runs.at(-1).corpusVersion, prompts: unique };
 fs.writeFileSync('whorl/benchmark/corpus.json', JSON.stringify(corpus, null, 2));
-console.log('corpus de backfill gerado:', unique.map(p => p.id).join(', '));
+console.log('backfill corpus generated:', unique.map(p => p.id).join(', '));
 " && node whorl/benchmark/runner.js --providers=PROVIDER_NAME
 ```
 
-Substitua `PROVIDER_NAME` pelo `name` do provider (ex: `ai21-jamba`). O script extrai apenas os prompts que o provider ainda não rodou, grava um corpus temporário, e o runner executa normalmente. Restaure o `corpus.json` original após o backfill.
+Replace `PROVIDER_NAME` with the provider's `name` (e.g. `ai21-jamba`). The script extracts only the prompts the provider hasn't covered, writes a temporary corpus, and the runner executes normally. Restore the original `corpus.json` after the backfill.
 
-**Nota:** runs anteriores a este fluxo não têm o campo `prompts` arquivado e dependem do histórico git. Runs a partir de agora arquivam os textos automaticamente.
+**Note:** runs predating this flow don't have the `prompts` field archived and depend on git history. Runs from now on archive the texts automatically.
 
-### Retry parcial (`merge-retry.js`)
+### Partial retry (`merge-retry.js`)
 
-Quando um provider falha em alguns prompts numa rodada full — o caso típico é o Gemini free tier hitar 429 depois das ~18 primeiras chamadas do dia — o fluxo pra completar a rodada sem refazer tudo é de 2 comandos:
+When a provider fails on some prompts during a full run — the typical case being Gemini free tier hitting 429 after the day's first ~18 calls — the path to complete the round without redoing everything is two commands:
 
 ```bash
-# 1. Re-roda APENAS o provider+prompts faltantes (cria uma Run retry efêmera)
+# 1. Re-run ONLY the missing provider+prompts (creates an ephemeral retry Run)
 node whorl/benchmark/runner.js --providers=gemini --prompts=p1,p2,p3,...
 
-# 2. Mescla os OKs da Run retry dentro da Run anterior e descarta a Run retry
+# 2. Merge the OK results from the retry Run into the previous Run and discard the retry
 node whorl/benchmark/merge-retry.js
 ```
 
-O `merge-retry.js` é cirúrgico: pega a última Run (a retry), acha os resultados OK, substitui os entries errored correspondentes na Run anterior (mesmo `provider`+`promptId`), e remove a Run retry do histórico. Suporta `--dry-run` pra preview. Erros que permaneceram (retry também falhou) ficam intactos na Run alvo. Funciona pra qualquer provider, não só Gemini.
+`merge-retry.js` is surgical: it grabs the latest Run (the retry), finds the OK results, replaces the corresponding errored entries in the previous Run (same `provider`+`promptId`), and removes the retry Run from the history. Supports `--dry-run` for preview. Errors that persisted (retry also failed) stay intact in the target Run. Works for any provider, not just Gemini.
 
-Isso resolve o gap arquitetural do runner, que sempre cria Run nova em vez de anexar a uma existente — sem merge, a Run retry se torna "a mais recente" e esconde todos os outros providers da Run cheia quando `/api/benchmark` lê.
+This patches an architectural gap in the runner, which always creates a new Run instead of appending to an existing one — without merge, the retry Run becomes "the latest" and hides every other provider's results from the full Run when `/api/benchmark` reads.
 
-## Saída
+## Output
 
-Console colorido (em TTY) com resultado por prompt e agregado por provider no final:
+Colored console (in a TTY) with per-prompt results and a per-provider aggregate at the end:
 
 ```
 ── Gemini 2.5 Flash (gemini-2.5-flash) ──
@@ -284,35 +284,35 @@ Console colorido (em TTY) com resultado por prompt e agregado por provider no fi
   clinical-nurse-intake-en     48 →  88   +40   2.8s
   ...
 
-── Agregado por provider ──
+── Per-provider aggregate ──
   Gemini 2.5 Flash          45.0 →  89.5   +44.5  (12 prompts)
   Claude (via CLI)          45.0 →  93.2   +48.2  (12 prompts)
 ```
 
-## Metodologia — decisões deliberadas
+## Methodology — deliberate decisions
 
-**Temperature 0.3 em todos os providers que suportam** — reduz ruído entre runs sem tornar determinístico a ponto de esconder variabilidade real do modelo.
+**Temperature 0.3 on every provider that supports it** — reduces noise between runs without making things deterministic enough to hide real model variability.
 
-**`max_tokens: 2048`** — suficiente pra um prompt reescrito; evita cortes silenciosos.
+**`max_tokens: 2048`** — enough for a rewritten prompt; avoids silent truncation.
 
-**Corpus rotativo, `schemaVersion` pra formato** — prompts mudam a cada run por design; `schemaVersion` sinaliza mudanças estruturais no formato do corpus (campos novos, mudança de schema), não no conteúdo.
+**Rotating corpus, `schemaVersion` for format** — prompts change each run by design; `schemaVersion` flags structural changes to the corpus format (new fields, schema shifts), not to its content.
 
-**Sem retry automático** — um erro de API conta como erro no resultado. Retry mascara instabilidade real do provider.
+**No automatic retry** — an API error counts as an error in the result. Retry masks real provider instability.
 
-**Claude via CLI subprocess em vez de API direta** — aproveita autenticação existente do Claude Code. Trade-off: não controla temperature/max_tokens do mesmo jeito que API. Em compensação, zero custo adicional.
+**Claude via CLI subprocess instead of direct API** — rides existing Claude Code authentication. Trade-off: doesn't control temperature/max_tokens the way an API call would. In exchange: zero additional cost.
 
-## Trajetória (especulativa)
+## Trajectory (speculative)
 
-Se a tese do benchmark se confirmar em escala, a infra já está em condições de virar artefato autônomo — não só instrumento interno do Whorl. Dois vetores:
+If the benchmark's thesis holds at scale, the infrastructure is already in shape to become a standalone artifact — not just an internal Whorl instrument. Two vectors:
 
-- **Como produto**: benchmarks diferenciados e reproduzíveis viram referências citadas (LMArena, Artificial Analysis, SEAL partiram de metodologia publicada). O Whet Benchmark tem nicho defensável — meta-prompt-following é uma capacidade que importa pra qualquer sistema com system prompts, agentes com guardrails, ou defesas contra prompt injection. Um leaderboard público, uma API de avaliação pra terceiros, ou uma linha editorial periódica são caminhos naturais em cima do que já existe.
-- **Como canal**: labs acompanham benchmarks novos, mesmo os pequenos, desde que a metodologia seja clara e o ângulo seja inédito. Modelos bem colocados viram citação em release notes; mal colocados geram ticket de "podemos rodar internamente e mandar PR?". É um vetor de atenção quase de graça, e tem a propriedade rara de crescer em valor conforme o Whet cresce — cada regra nova, domínio novo ou idioma novo amplia automaticamente o escopo do que o benchmark mede.
+- **As a product**: differentiated, reproducible benchmarks become cited references (LMArena, Artificial Analysis, SEAL all started from published methodology). The Whet Benchmark has a defensible niche — meta-prompt-following matters for any system with system prompts, agents with guardrails, or defenses against prompt injection. A public leaderboard, a third-party evaluation API, or a periodic editorial line are natural paths on top of what's already here.
+- **As a channel**: labs follow new benchmarks, even small ones, as long as the methodology is clear and the angle is novel. Models that score well end up cited in release notes; ones that score poorly produce "can we run it internally and send a PR?" tickets. It's an almost-free vector for attention, with the rare property of growing in value as Whet itself grows — every new rule, domain, or language automatically expands the benchmark's scope.
 
-Especulação, não roadmap. Mas informa decisões de hoje: escolhas de metodologia que preservam reproducibilidade e independência editorial têm retorno assimétrico se esse futuro se materializar, e custo zero se não.
+Speculation, not roadmap. But it informs decisions today: methodological choices that preserve reproducibility and editorial independence have asymmetric upside if that future materializes, and zero cost if it doesn't.
 
-## Limitações honestas
+## Honest limitations
 
-- **Drift de modelo.** Providers atualizam modelos constantemente. Um run de abril pode não valer em junho. Re-runs periódicos são necessários e o workflow `benchmark-refresh` existe pra isso.
-- **Amostra por run é modesta.** 12 prompts por run cobrem as 12 regras por design, mas não esgotam a variedade de como cada regra pode se manifestar. A breadth vem da **acumulação entre runs** (60+ prompts únicos após 5 runs do novo formato), não do tamanho de uma run individual.
-- **Variabilidade temporal.** Mesmo temperature baixa, o mesmo prompt pode render diferente em duas chamadas. O aggregate cumulativo de múltiplas runs com prompts distintos mitiga isso melhor do que re-runs do mesmo set.
-- **Circularidade declarada.** O score é do próprio linter do Whet. Um modelo que "engana" o meta-prompt com reformulação superficial pontua bem sem ter aprendido nada. A validação cruzada vem do workflow `rule-evaluation` (agentes cegos confirmando que as regras capturam degradação real de comportamento). Melhorias no corpus e nas regras reduzem esse risco ao longo do tempo, mas eliminá-lo completamente exigiria um segundo scorer independente — caminho plausível, não feito.
+- **Model drift.** Providers update models constantly. An April run may not hold in June. Periodic re-runs are necessary and the `benchmark-refresh` workflow exists for that.
+- **Per-run sample is modest.** 12 prompts per run cover the 12 rules by design but don't exhaust the variety of how each rule can manifest. Breadth comes from **accumulation across runs** (60+ unique prompts after 5 runs of the new format), not from individual-run size.
+- **Temporal variability.** Even at low temperature, the same prompt can yield differently across two calls. The cumulative aggregate of multiple runs with distinct prompts mitigates this better than re-runs of the same set.
+- **Declared circularity.** The score is the Whet linter's own. A model that "tricks" the meta-prompt with superficial rephrasing scores well without having learned anything. Cross-validation comes from the `rule-evaluation` workflow (blind agents confirming that rules capture real behavior degradation). Improvements to the corpus and rules reduce this risk over time, but eliminating it entirely would require a second independent scorer — a plausible path, not yet implemented.
