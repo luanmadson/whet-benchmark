@@ -1,0 +1,55 @@
+{
+  "name": "@trywhet/cli",
+  "version": "0.1.0",
+  "description": "Whet — static linter for AI system prompts. Detects patterns that degrade agent behavior and generates a rewrite meta-prompt for correction. Supports PT/EN/ES.",
+  "keywords": [
+    "whet",
+    "prompt",
+    "lint",
+    "linter",
+    "ai",
+    "llm",
+    "system-prompt",
+    "prompt-engineering",
+    "benchmark",
+    "meta-prompt-following"
+  ],
+  "license": "MIT",
+  "homepage": "https://trywhet.com",
+  "bugs": "https://github.com/luanmadson/whet-benchmark/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luanmadson/whet-benchmark.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "whet": "bin/whet.js"
+  },
+  "files": [
+    "bin/",
+    "dist/core/",
+    "dist/cli/"
+  ],
+  "exports": {
+    "./cli": "./dist/cli/index.js",
+    "./core": "./dist/core/analyzer.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build:cli": "tsc -p tsconfig.cli.json",
+    "cli": "npm run build:cli && node bin/whet.js",
+    "prepack": "npm run build:cli",
+    "test": "npm run build:cli && node --test tests/rules/*.test.js tests/models.test.js tests/analyzer.test.js && node tests/cli-integration.test.js",
+    "test:unit": "node --test tests/rules/*.test.js tests/models.test.js tests/analyzer.test.js",
+    "benchmark": "node whorl/benchmark/runner.js",
+    "benchmark:dry": "node whorl/benchmark/runner.js --dry-run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.2",
+    "typescript": "^5.8.3"
+  }
+}

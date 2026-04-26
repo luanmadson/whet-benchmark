@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+*.tsbuildinfo
+
+# Environment — chaves de provider, nunca commitar
+.env
+.env.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Live ranking — fica em produção (Redis/JSONL no site privado),
+# nunca neste repo público. Se aparecer aqui é cópia acidental.
+whorl/benchmark/live-ranking-*.jsonl
