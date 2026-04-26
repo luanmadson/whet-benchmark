@@ -1,9 +1,9 @@
 //=========================================
-// Provider: OpenAI GPT-5.4 (flagship atual, pay-as-you-go)
+// Provider: OpenAI GPT-5.4 (current flagship, pay-as-you-go)
 //
-// Autenticação: OPENAI_API_KEY no .env.local ou env do processo.
-// Modelo flagship lançado em 5/mar/2026. $2.50/M input, $15/M output.
-// Preço ~2x o output do gpt-4o-mini; ~$1.13 por run full do corpus.
+// Auth: OPENAI_API_KEY in .env.local or process env.
+// Flagship model released on 2026-03-05. $2.50/M input, $15/M output.
+// Roughly 2× the output cost of gpt-4o-mini; ~$1.13 per full corpus run.
 //=========================================
 
 "use strict";
@@ -42,7 +42,7 @@ async function submitOnce(fullPrompt, apiKey) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("OPENAI_API_KEY ausente");
+  if (!apiKey) throw new Error("OPENAI_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -51,7 +51,7 @@ async function submit(fullPrompt) {
     if (response.ok) {
       const data = await response.json();
       const text = data?.choices?.[0]?.message?.content;
-      if (!text) throw new Error(`OpenAI retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+      if (!text) throw new Error(`OpenAI returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
       return text.trim();
     }
 
@@ -70,7 +70,7 @@ async function submit(fullPrompt) {
     break;
   }
 
-  throw lastError || new Error("OpenAI: falha após retries");
+  throw lastError || new Error("OpenAI: failed after retries");
 }
 
 module.exports = {
@@ -78,8 +78,8 @@ module.exports = {
   displayName: "GPT-5.4 (OpenAI)",
   model: MODEL,
   tier: "paid",
-  origin: "OpenAI (EUA)",
-  description: "Flagship atual da OpenAI (lançado março/2026) — testa se a nova geração quebra o padrão conservador do gpt-4o-mini",
+  origin: "OpenAI (USA)",
+  description: "OpenAI's current flagship (released March 2026) — tests whether the new generation breaks the gpt-4o-mini conservative pattern",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

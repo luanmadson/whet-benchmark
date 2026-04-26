@@ -1,10 +1,10 @@
 //=========================================
 // Provider: xAI Grok 4.20 reasoning
 //
-// Autenticação: XAI_API_KEY no .env.local ou env do processo.
-// Obter chave: https://console.x.ai → API Keys
-// Acesso: xAI descontinuou o trial automático. Pra usar sem top-up,
-// ativar "Data Sharing for Credits" em Team Settings → Data Controls.
+// Auth: XAI_API_KEY in .env.local or process env.
+// Get a key: https://console.x.ai → API Keys
+// Access: xAI discontinued the automatic trial. To use without a
+// top-up, enable "Data Sharing for Credits" under Team Settings → Data Controls.
 // Docs: https://docs.x.ai/docs/api-reference#responses (Responses API)
 //=========================================
 
@@ -42,9 +42,9 @@ async function submitOnce(fullPrompt, apiKey) {
   });
 }
 
-// Extrai o texto da resposta da Responses API. O shape canônico é
+// Extract text from the Responses API answer. The canonical shape is
 // { output: [{ content: [{ type: "output_text", text: "..." }] }] },
-// mas algumas variantes trazem output_text direto — cobrimos ambos.
+// but some variants return output_text directly — we cover both.
 function extractText(data) {
   if (typeof data?.output_text === "string" && data.output_text.length > 0) {
     return data.output_text;
@@ -62,7 +62,7 @@ function extractText(data) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("XAI_API_KEY ausente");
+  if (!apiKey) throw new Error("XAI_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -71,7 +71,7 @@ async function submit(fullPrompt) {
     if (response.ok) {
       const data = await response.json();
       const text = extractText(data);
-      if (!text) throw new Error(`Grok retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+      if (!text) throw new Error(`Grok returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
       return text.trim();
     }
 
@@ -90,7 +90,7 @@ async function submit(fullPrompt) {
     break;
   }
 
-  throw lastError || new Error("Grok: falha após retries");
+  throw lastError || new Error("Grok: failed after retries");
 }
 
 module.exports = {
@@ -98,8 +98,8 @@ module.exports = {
   displayName: "Grok 4.20 Reasoning (xAI)",
   model: MODEL,
   tier: "data-sharing",
-  origin: "xAI (EUA)",
-  description: "Alinhamento declaradamente menos restritivo — testa meta-prompt-following sob menor resistência a reformular",
+  origin: "xAI (USA)",
+  description: "Self-described less-restrictive alignment — tests meta-prompt-following under lower resistance to reformulating",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

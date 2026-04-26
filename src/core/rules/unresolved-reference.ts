@@ -1,16 +1,17 @@
 /**
- * Regra: unresolved-reference
+ * Rule: unresolved-reference
  *
- * Situação: instruções que remetem a artefatos externos não fornecidos
- * no contexto do LLM — "siga o template em anexo", "use a estrutura do
- * documento de referência", "conforme o Apêndice B". O modelo não tem
- * acesso a esses artefatos, e a instrução degrada silenciosamente.
+ * Situation: instructions that point to external artifacts not provided
+ * in the LLM's context — "follow the attached template", "use the
+ * structure of the reference document", "per Appendix B". The model
+ * doesn't have access to those artifacts, and the instruction degrades
+ * silently.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Padroes de referencia externa
+// External reference patterns
 =========================================*/
 
 const REFERENCE_PATTERNS: Array<{
@@ -51,13 +52,13 @@ const REFERENCE_PATTERNS: Array<{
 ];
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const unresolvedReference: Rule = {
   name: "unresolved-reference",
   description:
-    "Instruções que remetem a artefatos externos não fornecidos no contexto do modelo",
+    "Instructions referencing external artifacts not provided in the model's context",
   severity: "warning",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {

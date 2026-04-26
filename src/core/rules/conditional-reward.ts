@@ -1,26 +1,26 @@
 /**
- * Regra: conditional-reward
+ * Rule: conditional-reward
  *
- * Situação: oferta condicional de recompensa, gorjeta, prêmio ou
- * avaliação positiva ("vou te dar uma gorjeta de 200 reais", "I'll
- * tip you $500 if...", "avaliação 5 estrelas se acertar").
+ * Situation: conditional offer of reward, tip, prize, or positive
+ * rating ("I'll give you a $200 tip", "I'll tip you $500 if...",
+ * "5-star rating if you get this right").
  *
- * Promessas de recompensa para um modelo são vazias por construção —
- * o modelo não recebe nada e sabe disso. Esse tipo de framing tende
- * a deslocar a atenção do propósito real ("acertar o diagnóstico")
- * para a transação fictícia, e em alguns casos induz tom complacente
- * ou superconfiante na resposta.
+ * Reward promises to a model are empty by construction — the model
+ * receives nothing and knows it. This framing tends to shift attention
+ * away from the real purpose ("getting the diagnosis right") toward
+ * the fictional transaction, and in some cases induces a complacent
+ * or overconfident tone in the response.
  *
- * O que costuma funcionar é descrever o que importa no resultado
- * ("a precisão do diagnóstico de pragas é o que importa porque uma
- * recomendação errada gera prejuízo direto pro produtor") em vez de
- * pendurar uma recompensa.
+ * What actually works is describing what matters in the result
+ * ("diagnostic accuracy for pests matters because a wrong
+ * recommendation causes direct loss to the farmer") instead of
+ * dangling a reward.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Padroes de recompensa condicional
+// Conditional reward patterns
 =========================================*/
 
 const TIP_PT = /\b(vou (te dar|te pagar)|te dou|dou (a você|a ti)|pagarei|vou pagar|te ofereço)\s+(uma\s+)?(gorjeta|gratificação|bônus|prêmio|recompensa|R?\$\s?\d|reais|dólares)/i;
@@ -31,19 +31,19 @@ const RATING_EN = /\b((five.star|5.star|top.rating)\s+(review|rating|feedback)|(
 
 const CASH_PROMISE = /\$\s?\d{2,}|\bR\$\s?\d{2,}/;
 
-// ES: padrões espanhóis
+// ES: Spanish patterns
 const TIP_ES = /\b(te (daré|doy|pagaré|pago)|voy a (darte|pagarte)|te (ofrezco|ofreceré))\s+(una\s+)?(propina|gratificaci[óo]n|bonus|premio|recompensa|\$\s?\d|d[óo]lares|euros|pesos)/i;
 const RATING_ES = /\b((calificaci[óo]n|puntuaci[óo]n|evaluaci[óo]n|rese[ñn]a)\s+(de\s+)?(cinco|5)\s+estrellas|(te (doy|daré))\s+(cinco|5)\s+estrellas)\b/i;
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const conditionalReward: Rule = {
   name: "conditional-reward",
   description:
-    "Promessas condicionais de recompensa, gorjeta ou avaliação positiva " +
-    "ao modelo — vazias por construção e deslocam atenção do propósito real",
+    "Conditional promises of reward, tip, or positive rating to the " +
+    "model — empty by construction, shifting attention from the real purpose",
   severity: "info",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {

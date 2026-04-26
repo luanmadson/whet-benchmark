@@ -1,12 +1,12 @@
 //=========================================
 // Provider: DeepSeek R1 (reasoning model, free trial)
 //
-// Autenticação: DEEPSEEK_API_KEY no .env.local (mesma chave do V3).
-// Obter chave: https://platform.deepseek.com
+// Auth: DEEPSEEK_API_KEY in .env.local (same key as V3).
+// Get a key: https://platform.deepseek.com
 // Docs: https://api-docs.deepseek.com/guides/reasoning_model
 //
-// Observação: o modelo reasoner ignora `temperature` e devolve
-// `reasoning_content` + `content` — pegamos só o `content` (resposta final).
+// Note: the reasoner model ignores `temperature` and returns
+// `reasoning_content` + `content` — we only grab `content` (the final answer).
 //=========================================
 
 "use strict";
@@ -20,7 +20,7 @@ function getApiKey() {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("DEEPSEEK_API_KEY ausente");
+  if (!apiKey) throw new Error("DEEPSEEK_API_KEY missing");
 
   const body = {
     model: MODEL,
@@ -44,7 +44,7 @@ async function submit(fullPrompt) {
 
   const data = await response.json();
   const text = data?.choices?.[0]?.message?.content;
-  if (!text) throw new Error(`DeepSeek R1 retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+  if (!text) throw new Error(`DeepSeek R1 returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
   return text.trim();
 }
 
@@ -54,7 +54,7 @@ module.exports = {
   model: MODEL,
   tier: "free",
   origin: "DeepSeek (China)",
-  description: "Versão reasoner do DeepSeek com chain-of-thought explícito",
+  description: "Reasoner version of DeepSeek with explicit chain-of-thought",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

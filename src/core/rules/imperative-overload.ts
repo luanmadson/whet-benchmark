@@ -1,15 +1,15 @@
 /**
- * Regra: imperative-overload
+ * Rule: imperative-overload
  *
- * Situação: excesso de linguagem imperativa ("NUNCA", "SEMPRE", "OBRIGATÓRIO",
- * "PROIBIDO", "É OBRIGATÓRIO", etc.) que tende a gerar agentes travados,
- * cautelosos e com conflitos entre regras.
+ * Situation: excess of imperative language ("NEVER", "ALWAYS", "REQUIRED",
+ * "FORBIDDEN", "MUST", etc.) that tends to produce stuck, cautious agents
+ * with conflicts between rules.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Padroes imperativos
+// Imperative patterns
 =========================================*/
 
 const IMPERATIVE_PATTERNS: Array<{
@@ -30,9 +30,9 @@ const IMPERATIVE_PATTERNS: Array<{
     tip:
       'Substituir "nunca" por "pode não ser adequado" ou "tende a não ' +
       'funcionar bem" costuma dar margem de adaptação ao agente.',
-    // Uso descritivo dentro de relativa ou cláusula subordinada
-    // ("mudança que nunca caberia", "quais regras não disparam nunca")
-    // — não é ordem direta ao agente, é narração sobre um terceiro objeto.
+    // Descriptive use inside relative or subordinate clauses
+    // ("a change that never would fit", "which rules never trigger")
+    // — not a direct order to the agent, it's narration about a third object.
     exclude: /\b(que|quais|qual|onde|quem|cujas?|nada|ninguém|nenhum[ao]?)\b[^.?!]{0,60}\bnunca\b/i,
   },
   {
@@ -46,10 +46,10 @@ const IMPERATIVE_PATTERNS: Array<{
     tip:
       'Substituir "sempre" por "costuma funcionar melhor" ou "tende a ' +
       'ser mais adequado" permite adaptação ao contexto.',
-    // "quase sempre" é hedge observacional, não instrução imperativa.
-    // Sujeito de 3ª pessoa + "sempre" + verbo 3ª pessoa = prosa descritiva
-    // sobre um terceiro objeto, não instrução ao agente.
-    // Ex: "Gatos sempre demonstram…", "Esse padrão sempre ocorre…"
+    // "quase sempre" is an observational hedge, not an imperative.
+    // 3rd-person subject + "sempre" + 3rd-person verb = descriptive prose
+    // about a third object, not an instruction to the agent.
+    // E.g.: "Gatos sempre demonstram…", "Esse padrão sempre ocorre…"
     exclude: /(?:\bquase\s+sempre\b|(?:^|[.!?]\s+)(?!(?:voc[êe]|tu|you)\b)[A-ZÁÉÍÓÚÂÊÎÔÛÀÇÜ]\w+(?:\s+\w+){0,3}\s+sempre\s+(?:demonstr|ocorr|exist|acontec|tend|precis|represent|indic|envolv|result|são|é|sao|e\b|tem\b|têm\b|s[ãa]o|est[áa]|ficam?))/i,
   },
   {
@@ -95,11 +95,11 @@ const IMPERATIVE_PATTERNS: Array<{
     tip:
       'Substituir "não pode" por "pode não ser adequado porque..." ' +
       "dá ao agente informação para decidir bem.",
-    // Uso descritivo em tempo composto ("o propósito não pode ter sido
-    // comprometido") — modal + particípio descreve estado, não ordem.
+    // Descriptive use in compound tense ("o propósito não pode ter sido
+    // comprometido") — modal + participle describes state, not an order.
     exclude: /\bnão pode\s+ter\s+\w+/i,
   },
-  // PT: sinônimos de NUNCA (antes de DEVE para ter prioridade em sentenças compostas)
+  // PT: synonyms of NUNCA (before DEVE so they win in compound sentences)
   {
     pattern: /\bsob nenhuma (hip[óo]tese|circunst[âa]ncia)\b/i,
     label: "sob nenhuma hipótese",
@@ -208,7 +208,7 @@ const IMPERATIVE_PATTERNS: Array<{
       "describing the reason often produces better compliance.",
     exclude: /\b(is |are |)(required|optional)\b.*\b(field|param|argument|dependency|package)/i,
   },
-  // EN: sinônimos de NEVER/ALWAYS
+  // EN: synonyms of NEVER/ALWAYS
   {
     pattern: /\bunder no circumstances\b/i,
     label: "under no circumstances",
@@ -269,7 +269,7 @@ const IMPERATIVE_PATTERNS: Array<{
       'Replace "at all times" with "tends to work better" or describe ' +
       "the context where it matters most.",
   },
-  // ES: padrões imperativos em espanhol
+  // ES: Spanish imperative patterns
   {
     pattern: /\bSIEMPRE\b/i,
     label: "SIEMPRE",
@@ -357,14 +357,14 @@ const IMPERATIVE_PATTERNS: Array<{
 ];
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const imperativeOverload: Rule = {
   name: "imperative-overload",
   description:
-    "Excesso de linguagem imperativa que tende a gerar agentes travados, " +
-    "cautelosos e com conflitos entre regras",
+    "Excess of imperative language that tends to produce stuck, cautious " +
+    "agents with conflicts between rules",
   severity: "warning",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {
@@ -373,10 +373,11 @@ export const imperativeOverload: Rule = {
     const lang = ctx.lang;
 
     for (const stmt of statements) {
-      // Sentenças com múltiplos imperativos sobrepostos ("sob nenhuma hipótese
-      // deve mentir") geram um diagnostic por padrão distinto, para que cada
-      // gatilho apareça destacado. Dedup por span de caractere evita que regex
-      // sobrepostos (ex: DEVE vs você DEVE) disparem duas vezes no mesmo trecho.
+      // Sentences with multiple overlapping imperatives ("sob nenhuma hipótese
+      // deve mentir") emit one diagnostic per distinct pattern, so each
+      // trigger shows up separately. Dedup by character span prevents
+      // overlapping regex (e.g. DEVE vs você DEVE) from firing twice on
+      // the same excerpt.
       const claimedSpans: Array<{ start: number; end: number }> = [];
 
       for (const { pattern, label, guidance, tip, exclude } of IMPERATIVE_PATTERNS) {

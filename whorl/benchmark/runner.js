@@ -1,24 +1,24 @@
 //=========================================
 // Whet Benchmark runner — cross-model score delta via meta-prompt
 //
-// Fluxo por prompt × provider:
+// Per-pair (prompt × provider) flow:
 //   1. analyze(prompt) → scoreBefore, metaPromptText
-//   2. submit(metaPromptText) → rewrittenPrompt (o provider reescreve)
+//   2. submit(metaPromptText) → rewrittenPrompt (the provider rewrites)
 //   3. analyze(rewrittenPrompt) → scoreAfter
 //   4. delta = scoreAfter - scoreBefore
 //
-// O meta-prompt de reescrita (output do renderer) já é auto-contido:
-// inclui o prompt original, as adequações sugeridas, e instrui o
-// destinatário a devolver só o prompt reescrito em texto corrido.
-// Então submit() recebe o meta-prompt inteiro como input.
+// The rewrite meta-prompt (renderer output) is already self-contained:
+// it includes the original prompt, the suggested adjustments, and tells
+// the recipient to return only the rewritten prompt as plain text. So
+// submit() receives the entire meta-prompt as input.
 //
-// Uso:
-//   node whorl/benchmark/runner.js                  # todos os providers disponíveis
+// Usage:
+//   node whorl/benchmark/runner.js                  # all available providers
 //   node whorl/benchmark/runner.js --providers=gemini,claude-cli
 //   node whorl/benchmark/runner.js --prompts=consultor-juridico,assistente-medico
-//   node whorl/benchmark/runner.js --dry-run        # não chama APIs, só imprime o plano
+//   node whorl/benchmark/runner.js --dry-run        # don't call APIs, just print the plan
 //
-// Resultados: salvos em whorl/benchmark/results.json (merge com rodadas anteriores)
+// Results: saved to whorl/benchmark/results.json (merged with previous runs)
 //=========================================
 
 "use strict";
@@ -26,7 +26,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-// Carrega .env.local manualmente (sem depender de dotenv)
+// Load .env.local manually (no dotenv dependency)
 const envLocalPath = path.resolve(__dirname, "..", "..", ".env.local");
 if (fs.existsSync(envLocalPath)) {
   const raw = fs.readFileSync(envLocalPath, "utf8");
@@ -42,15 +42,15 @@ if (fs.existsSync(envLocalPath)) {
   }
 }
 
-// Garante que o core compilado está disponível
+// Make sure the compiled core is available
 const analyzerPath = path.resolve(__dirname, "..", "..", "dist", "core", "analyzer.js");
 if (!fs.existsSync(analyzerPath)) {
-  console.error("\x1b[31merro:\x1b[0m dist/core/analyzer.js não encontrado. Rode `npm run build:cli` antes.");
+  console.error("\x1b[31merror:\x1b[0m dist/core/analyzer.js not found. Run `npm run build:cli` first.");
   process.exit(2);
 }
 const { analyze } = require(analyzerPath);
 
-// Carrega providers
+// Load providers
 const providers = [
   require("./providers/gemini"),
   require("./providers/mistral"),
@@ -66,10 +66,10 @@ const providers = [
   require("./providers/openai-gpt-5-4"),
   require("./providers/openai-gpt-5-5"),
   require("./providers/openai-gpt-5-nano"),
-  // require("./providers/grok"), // standby até ativar Data Sharing (top-up $5 + opt-in) — ver PROVIDERS-BACKLOG.md
+  // require("./providers/grok"), // standby until Data Sharing is enabled ($5 top-up + opt-in) — see PROVIDERS-BACKLOG.md
 ];
 
-// Parser de flags CLI leve
+// Lightweight CLI flag parser
 function parseFlags(argv) {
   const flags = { providers: null, prompts: null, dryRun: false };
   for (const arg of argv) {
@@ -110,11 +110,11 @@ function deltaColor(delta) {
 async function main() {
   const flags = parseFlags(process.argv.slice(2));
 
-  // Carrega corpus
+  // Load corpus
   const corpusPath = path.resolve(__dirname, "corpus.json");
   const corpus = JSON.parse(fs.readFileSync(corpusPath, "utf8"));
 
-  // Filtra providers
+  // Filter providers
   const selectedProviders = providers.filter(p => {
     if (flags.providers && !flags.providers.includes(p.name)) return false;
     return true;
@@ -123,29 +123,29 @@ async function main() {
   const availableProviders = selectedProviders.filter(p => p.isAvailable());
   const unavailable = selectedProviders.filter(p => !p.isAvailable());
 
-  // Filtra prompts
+  // Filter prompts
   const selectedPrompts = corpus.prompts.filter(p => {
     if (flags.prompts && !flags.prompts.includes(p.id)) return false;
     return true;
   });
 
   console.log(color(BOLD, "whet cross-model benchmark"));
-  console.log(color(DIM, `corpus v${corpus.schemaVersion} · ${selectedPrompts.length} prompts · ${availableProviders.length}/${selectedProviders.length} providers disponíveis`));
+  console.log(color(DIM, `corpus v${corpus.schemaVersion} · ${selectedPrompts.length} prompts · ${availableProviders.length}/${selectedProviders.length} providers available`));
   console.log();
 
   if (unavailable.length > 0) {
-    console.log(color(YELLOW, "providers pulados (chave ausente):"));
+    console.log(color(YELLOW, "providers skipped (missing key):"));
     for (const p of unavailable) console.log(color(GRAY, `  · ${p.displayName} (${p.name})`));
     console.log();
   }
 
   if (availableProviders.length === 0) {
-    console.error(color(RED, "erro: nenhum provider disponível. Configure as chaves no .env.local."));
+    console.error(color(RED, "error: no providers available. Configure keys in .env.local."));
     process.exit(2);
   }
 
   if (flags.dryRun) {
-    console.log(color(BOLD, "plano (dry run):"));
+    console.log(color(BOLD, "plan (dry run):"));
     for (const p of availableProviders) {
       console.log(color(BLUE, `  ${p.displayName}`));
       for (const entry of selectedPrompts) {
@@ -158,7 +158,7 @@ async function main() {
   const runs = [];
   const runStartedAt = new Date().toISOString();
 
-  // Executa: para cada provider, itera prompts. Mantém ordem previsível.
+  // Run: for each provider, iterate prompts. Predictable order.
   for (const provider of availableProviders) {
     console.log(color(BOLD + BLUE, `\n── ${provider.displayName} (${provider.model}) ──`));
 
@@ -166,20 +166,20 @@ async function main() {
       process.stdout.write(color(GRAY, `  ${entry.id.padEnd(26)} `));
 
       try {
-        // 1. Analyse input
+        // 1. Analyze input
         const before = analyze(entry.text);
-        const metaPrompt = before.output; // inclui original + adequações + instrução
+        const metaPrompt = before.output; // includes original + adjustments + instruction
         if (!metaPrompt) {
-          console.log(color(YELLOW, "pulado — prompt sem diagnósticos (score já limpo)"));
+          console.log(color(YELLOW, "skipped — prompt has no diagnostics (score already clean)"));
           continue;
         }
 
-        // 2. Submit meta-prompt de reescrita
+        // 2. Submit rewrite meta-prompt
         const startedAt = Date.now();
         const rewritten = await provider.submit(metaPrompt);
         const elapsedMs = Date.now() - startedAt;
 
-        // 3. Analyse output
+        // 3. Analyze output
         const after = analyze(rewritten);
 
         const delta = after.score - before.score;
@@ -210,7 +210,7 @@ async function main() {
         });
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        console.log(color(RED, `erro: ${msg.slice(0, 100)}`));
+        console.log(color(RED, `error: ${msg.slice(0, 100)}`));
         runs.push({
           provider: provider.name,
           displayName: provider.displayName,
@@ -222,9 +222,9 @@ async function main() {
     }
   }
 
-  // Agregados por provider
+  // Per-provider aggregate
   console.log();
-  console.log(color(BOLD, "── Agregado por provider ──"));
+  console.log(color(BOLD, "── Per-provider aggregate ──"));
   const byProvider = new Map();
   for (const r of runs) {
     if (r.error || typeof r.delta !== "number") continue;
@@ -244,14 +244,14 @@ async function main() {
     console.log(`  ${display.padEnd(24)} ${beforeStr} → ${afterStr}  ${deltaStr}  ${color(GRAY, `(${rs.length} prompts)`)}`);
   }
 
-  // Persiste
+  // Persist
   const resultsPath = path.resolve(__dirname, "results.json");
   let existing = { schemaVersion: 1, runs: [] };
   if (fs.existsSync(resultsPath)) {
     try {
       existing = JSON.parse(fs.readFileSync(resultsPath, "utf8"));
     } catch {
-      // ignora se corrupto
+      // ignore if corrupt
     }
   }
   existing.runs.push({
@@ -263,10 +263,10 @@ async function main() {
   });
   fs.writeFileSync(resultsPath, JSON.stringify(existing, null, 2));
   console.log();
-  console.log(color(DIM, `resultados salvos em whorl/benchmark/results.json`));
+  console.log(color(DIM, `results saved to whorl/benchmark/results.json`));
 }
 
 main().catch(err => {
-  console.error(color(RED, `erro fatal: ${err instanceof Error ? err.message : String(err)}`));
+  console.error(color(RED, `fatal error: ${err instanceof Error ? err.message : String(err)}`));
   process.exit(2);
 });

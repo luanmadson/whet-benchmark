@@ -1,8 +1,8 @@
 //=========================================
-// Provider: AI21 Jamba (trial $10, 3 meses, sem cartão)
+// Provider: AI21 Jamba ($10 trial, 3 months, no credit card)
 //
-// Autenticação: AI21_API_KEY no .env.local ou env do processo.
-// Obter chave: https://studio.ai21.com/v2/workspaces/{id}/api-keys
+// Auth: AI21_API_KEY in .env.local or process env.
+// Get a key: https://studio.ai21.com/v2/workspaces/{id}/api-keys
 // Docs: https://docs.ai21.com/reference/jamba-15-api-ref
 //=========================================
 
@@ -42,7 +42,7 @@ async function submitOnce(fullPrompt, apiKey) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("AI21_API_KEY ausente");
+  if (!apiKey) throw new Error("AI21_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -51,7 +51,7 @@ async function submit(fullPrompt) {
     if (response.ok) {
       const data = await response.json();
       const text = data?.choices?.[0]?.message?.content;
-      if (!text) throw new Error(`AI21 retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+      if (!text) throw new Error(`AI21 returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
       return text.trim();
     }
 
@@ -70,7 +70,7 @@ async function submit(fullPrompt) {
     break;
   }
 
-  throw lastError || new Error("AI21: falha após retries");
+  throw lastError || new Error("AI21: failed after retries");
 }
 
 module.exports = {
@@ -79,7 +79,7 @@ module.exports = {
   model: MODEL,
   tier: "trial",
   origin: "AI21 Labs (Israel)",
-  description: "Arquitetura Mamba-Transformer híbrida — única não-transformer pura do benchmark",
+  description: "Hybrid Mamba-Transformer architecture — the only non-pure-transformer in the benchmark",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

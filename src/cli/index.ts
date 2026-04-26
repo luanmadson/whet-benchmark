@@ -1,7 +1,7 @@
 //=========================================
 // Namespace cli
-// Entry point do Whet como ferramenta de linha de comando.
-// Reutiliza o core integralmente — nenhuma regra é reimplementada aqui.
+// Entry point for Whet as a command-line tool.
+// Reuses the core fully — no rule is reimplemented here.
 //=========================================
 
 import { readFileSync } from "node:fs";
@@ -9,7 +9,7 @@ import { analyze } from "../core/analyzer";
 import type { Diagnostic } from "../core/models";
 
 /*=========================================
-// ANSI helpers (sem depender de chalk/picocolors)
+// ANSI helpers (no chalk/picocolors dependency)
 =========================================*/
 
 const RESET = "\x1b[0m";
@@ -39,7 +39,7 @@ function colorize(color: string, text: string): string {
 }
 
 /*=========================================
-// Leitura de input (arquivo, stdin, inline)
+// Input reading (file, stdin, inline)
 =========================================*/
 
 async function readStdin(): Promise<string> {
@@ -53,43 +53,43 @@ async function readStdin(): Promise<string> {
 
 function usage(): string {
   return [
-    "whet — analisa um system prompt e imprime os problemas encontrados",
+    "whet — analyzes a system prompt and prints the issues found",
     "",
-    "Uso:",
-    "  whet <arquivo.txt>        Analisa o conteúdo do arquivo",
-    "  whet -                    Lê o prompt de stdin",
-    "  whet --help               Mostra esta mensagem",
+    "Usage:",
+    "  whet <file.txt>           Analyze the file's contents",
+    "  whet -                    Read the prompt from stdin",
+    "  whet --help               Show this message",
     "",
     "Flags:",
-    "  --json                    Emite o resultado completo em JSON (sem cores)",
-    "  --no-reverse              Oculta a instrução de correção",
+    "  --json                    Emit the full result as JSON (no colors)",
+    "  --no-reverse              Hide the correction instruction",
     "",
-    "Saída:",
-    "  Código 0  — score ≥ 90 (prompt saudável)",
-    "  Código 1  — score 60–89 (tem avisos)",
-    "  Código 2  — score < 60 ou contém erros",
+    "Exit codes:",
+    "  0  — score ≥ 90 (healthy prompt)",
+    "  1  — score 60–89 (has warnings)",
+    "  2  — score < 60 or contains errors",
   ].join("\n");
 }
 
 /*=========================================
-// Formatacao do output human-readable
+// Human-readable output formatting
 =========================================*/
 
 function scoreBand(score: number): string {
   if (score >= 90) return colorize(GREEN, `${score}/100 ok`);
-  if (score >= 60) return colorize(YELLOW, `${score}/100 atenção`);
-  return colorize(RED, `${score}/100 crítico`);
+  if (score >= 60) return colorize(YELLOW, `${score}/100 attention`);
+  return colorize(RED, `${score}/100 critical`);
 }
 
 function formatDiagnostic(d: Diagnostic): string {
   const tag = colorize(SEVERITY_COLOR[d.severity] + BOLD, `[${SEVERITY_TAG[d.severity]}]`);
   const rule = colorize(DIM, d.rule);
-  const location = d.line ? colorize(DIM, ` (linha ${d.line})`) : "";
+  const location = d.line ? colorize(DIM, ` (line ${d.line})`) : "";
   const lines: string[] = [`${tag} ${rule}${location}`];
-  lines.push(`  ${colorize(GRAY, "trecho:")} ${d.original}`);
-  if (d.highlight) lines.push(`  ${colorize(GRAY, "gatilho:")} ${colorize(SEVERITY_COLOR[d.severity], d.highlight)}`);
-  lines.push(`  ${colorize(GRAY, "sugestão:")} ${d.suggestion}`);
-  if (d.tip) lines.push(`  ${colorize(GRAY, "dica:")} ${d.tip}`);
+  lines.push(`  ${colorize(GRAY, "excerpt:")} ${d.original}`);
+  if (d.highlight) lines.push(`  ${colorize(GRAY, "trigger:")} ${colorize(SEVERITY_COLOR[d.severity], d.highlight)}`);
+  lines.push(`  ${colorize(GRAY, "suggestion:")} ${d.suggestion}`);
+  if (d.tip) lines.push(`  ${colorize(GRAY, "tip:")} ${d.tip}`);
   return lines.join("\n");
 }
 
@@ -117,10 +117,10 @@ function render(text: string, opts: { json: boolean; noReverse: boolean }): { ou
 
   if (result.diagnostics.length === 0) {
     parts.push("");
-    parts.push(colorize(GREEN, "nenhum padrão problemático detectado"));
+    parts.push(colorize(GREEN, "no problematic patterns detected"));
     if (result.positiveTraits.length > 0) {
       parts.push("");
-      parts.push(colorize(DIM, "pontos positivos:"));
+      parts.push(colorize(DIM, "positive traits:"));
       for (const trait of result.positiveTraits) {
         parts.push(`  ${colorize(GREEN, "·")} ${trait}`);
       }
@@ -129,7 +129,7 @@ function render(text: string, opts: { json: boolean; noReverse: boolean }): { ou
     const counts = { error: 0, warning: 0, info: 0 };
     for (const d of result.diagnostics) counts[d.severity]++;
     parts.push(
-      colorize(DIM, `${counts.error} erro(s), ${counts.warning} aviso(s), ${counts.info} sugestão(ões)`),
+      colorize(DIM, `${counts.error} error(s), ${counts.warning} warning(s), ${counts.info} suggestion(s)`),
     );
     parts.push("");
     for (const d of result.diagnostics) {
@@ -137,7 +137,7 @@ function render(text: string, opts: { json: boolean; noReverse: boolean }): { ou
       parts.push("");
     }
     if (!opts.noReverse) {
-      parts.push(colorize(BOLD, "instrução de correção (cole na sua IA):"));
+      parts.push(colorize(BOLD, "correction instruction (paste into your AI):"));
       parts.push("");
       parts.push(result.output);
     }
@@ -163,7 +163,7 @@ async function main() {
   const positional = argv.filter((a) => !a.startsWith("-") || a === "-");
 
   if (positional.length === 0) {
-    process.stderr.write(colorize(RED, "erro: informe um arquivo ou use '-' para ler do stdin") + "\n");
+    process.stderr.write(colorize(RED, "error: pass a file or use '-' to read from stdin") + "\n");
     process.exit(2);
   }
 
@@ -173,12 +173,12 @@ async function main() {
     text = source === "-" ? await readStdin() : readFileSync(source, "utf8");
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    process.stderr.write(colorize(RED, `erro ao ler ${source}: ${msg}`) + "\n");
+    process.stderr.write(colorize(RED, `error reading ${source}: ${msg}`) + "\n");
     process.exit(2);
   }
 
   if (!text.trim()) {
-    process.stderr.write(colorize(RED, "erro: input vazio") + "\n");
+    process.stderr.write(colorize(RED, "error: empty input") + "\n");
     process.exit(2);
   }
 

@@ -1,12 +1,12 @@
 /**
- * Renderer — gera o meta-prompt de reescrita (instrução de correção
- * autocontida enviada a um LLM para reescrever o prompt original).
+ * Renderer — generates the rewrite meta-prompt (a self-contained
+ * correction instruction sent to an LLM to rewrite the original prompt).
  *
- * Duas saídas:
- * 1. render() → texto limpo para copiar e colar numa IA
- * 2. getStructuredParts() → mesmas partes separadas para a UI estilizar
+ * Two outputs:
+ * 1. render() → clean text to copy and paste into an AI
+ * 2. getStructuredParts() → the same parts split out for the UI to style
  *
- * O que a UI mostra É o que o usuário copia. Sem representação paralela.
+ * What the UI shows IS what the user copies. No parallel representation.
  */
 
 import type { Diagnostic } from "./models";
@@ -14,7 +14,7 @@ import { detectLanguage } from "./models";
 import { groupByRule } from "./rule-meta";
 
 /*=========================================
-// Partes estruturadas (UI + texto)
+// Structured parts (UI + text)
 =========================================*/
 
 export interface StructuredOutput {
@@ -137,7 +137,7 @@ export function getStructuredOutput(diagnostics: Diagnostic[], text: string, lan
 }
 
 /*=========================================
-// Texto limpo para copiar
+// Clean text to copy
 =========================================*/
 
 export function render(diagnostics: Diagnostic[], _score: number, text: string, lang?: "pt" | "en" | "es"): string {
@@ -146,7 +146,7 @@ export function render(diagnostics: Diagnostic[], _score: number, text: string, 
 }
 
 /*=========================================
-// Traits positivos (prompt limpo)
+// Positive traits (clean prompt)
 =========================================*/
 
 export function detectPositiveTraits(text: string, lang?: "pt" | "en" | "es"): string[] {
@@ -186,7 +186,7 @@ export function detectPositiveTraits(text: string, lang?: "pt" | "en" | "es"): s
 }
 
 /*=========================================
-// Deteccao de dominio por palavras-chave
+// Domain detection by keyword patterns
 =========================================*/
 
 const DOMAIN_PATTERNS: Array<{ pattern: RegExp; label: string; labelEn: string }> = [
@@ -220,7 +220,7 @@ function detectDomain(text: string, lang: "pt" | "en" | "es" = "pt"): string | n
 }
 
 /*=========================================
-// Exemplo concreto por adequacao
+// Concrete example per adjustment
 =========================================*/
 
 function buildExample(rule: string, items: Diagnostic[], lang: "pt" | "en" | "es" = "pt"): string {
@@ -309,7 +309,7 @@ function buildExample(rule: string, items: Diagnostic[], lang: "pt" | "en" | "es
 }
 
 /*=========================================
-// Textos das diretivas (fonte unica)
+// Directive texts (single source)
 =========================================*/
 
 const DIRECTIVE_TEXT: Record<string, string> = {

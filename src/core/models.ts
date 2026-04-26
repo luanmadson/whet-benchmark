@@ -1,37 +1,37 @@
 /**
- * Vocabulário do sistema.
+ * System vocabulary.
  *
- * Define os tipos que todas as camadas usam pra se comunicar.
- * Nenhuma lógica aqui — só formatos.
+ * Defines the types every layer uses to communicate.
+ * No logic here — just shapes.
  */
 
 /*=========================================
-// Tipos base
+// Base types
 =========================================*/
 
-// Quão grave é o problema encontrado
+// How serious the issue found is
 export type Severity = "error" | "warning" | "info";
 
-// Um problema encontrado no prompt
+// An issue found in the prompt
 export interface Diagnostic {
-  rule: string;        // qual regra encontrou ("imperative-overload")
+  rule: string;        // which rule found it ("imperative-overload")
   severity: Severity;
-  line?: number;       // onde no texto (opcional — regras globais não têm linha)
-  original: string;    // o trecho problemático
-  highlight?: string;  // palavra/trecho especifico que disparou a regra
-  reason: string;      // por que é problema (a experiência por trás)
-  suggestion: string;  // reescrita ou caminho concreto
-  tip?: string; // orientação de reformulação alinhada à filosofia do sistema
+  line?: number;       // where in the text (optional — global rules have no line)
+  original: string;    // the problematic excerpt
+  highlight?: string;  // specific word/excerpt that triggered the rule
+  reason: string;      // why it's a problem (the experience behind it)
+  suggestion: string;  // rewrite or concrete path forward
+  tip?: string; // reformulation guidance aligned with the system's philosophy
 }
 
 /*=========================================
-// Utilitario: split de texto em instrucoes
+// Utility: split text into statements
 =========================================*/
 
 /**
- * Divide texto em instrucoes individuais.
- * Cada linha vira uma ou mais instrucoes (split por sentenca quando a linha e longa).
- * Retorna pares [lineNumber, instructionText].
+ * Splits text into individual statements.
+ * Each line becomes one or more statements (split by sentence when the line is long).
+ * Returns pairs [lineNumber, instructionText].
  */
 export function splitIntoStatements(text: string): Array<{ line: number; text: string }> {
   const lines = text.split("\n");
@@ -41,7 +41,7 @@ export function splitIntoStatements(text: string): Array<{ line: number; text: s
     const trimmed = lines[i].trim();
     if (!trimmed || trimmed.startsWith("//") || trimmed.startsWith("#")) continue;
 
-    // Se a linha tem multiplas sentencas, split por ponto/exclamacao/interrogacao seguido de espaco
+    // If the line has multiple sentences, split on period/exclamation/question followed by whitespace
     const sentences = trimmed.split(/(?<=[.!?])\s+/).filter((s) => s.trim().length > 0);
     if (sentences.length > 1) {
       for (const sentence of sentences) {
@@ -56,12 +56,12 @@ export function splitIntoStatements(text: string): Array<{ line: number; text: s
 }
 
 /*=========================================
-// Deteccao de idioma do texto
+// Text language detection
 =========================================*/
 
 /**
- * Detecta se o texto é predominantemente em português, espanhol ou inglês.
- * Usado pelas regras e pelo renderer para gerar texto no idioma correto.
+ * Detects whether the text is predominantly Portuguese, Spanish, or English.
+ * Used by the rules and the renderer to produce text in the correct language.
  */
 export function detectLanguage(text: string): "pt" | "en" | "es" {
   const ptMarkers = /\b(você|voce|não|nao|instrução|instruções|seja|responda|considere|mantenha|evite|utilize|é obrigatório|também|então|porquê)\b/gi;
@@ -77,13 +77,13 @@ export function detectLanguage(text: string): "pt" | "en" | "es" {
 }
 
 /*=========================================
-// Contexto pre-computado da analise
+// Pre-computed analysis context
 =========================================*/
 
 /**
- * Dados calculados uma unica vez no inicio de analyze() e
- * compartilhados com todas as regras — evita re-computar
- * detectLanguage e splitIntoStatements em cada regra.
+ * Data computed once at the start of analyze() and shared
+ * with every rule — avoids re-running detectLanguage and
+ * splitIntoStatements inside each rule.
  */
 export interface AnalysisContext {
   text: string;
@@ -92,24 +92,24 @@ export interface AnalysisContext {
 }
 
 /*=========================================
-// Contrato das regras
+// Rule contract
 =========================================*/
 
 export interface Rule {
-  name: string;          // identificador ("imperative-overload")
-  description: string;   // a situação que endereça (pro usuário entender "quando isso é útil pra mim?")
-  severity: Severity;    // severidade padrão dos diagnósticos dessa regra
+  name: string;          // identifier ("imperative-overload")
+  description: string;   // the situation it addresses (so the user knows "when is this useful for me?")
+  severity: Severity;    // default severity for diagnostics from this rule
   analyze: (text: string, ctx: AnalysisContext) => Diagnostic[];
 }
 
 /*=========================================
-// Resultado da analise
+// Analysis result
 =========================================*/
 
 export interface AnalysisResult {
   score: number;           // 0-100
   diagnostics: Diagnostic[];
-  output: string;          // meta-prompt de reescrita — instrução de correção enviada a outro LLM
-  originalText: string;    // texto original analisado
-  positiveTraits: string[]; // pontos positivos do prompt (quando limpo)
+  output: string;          // rewrite meta-prompt — correction instruction sent to another LLM
+  originalText: string;    // original analyzed text
+  positiveTraits: string[]; // positive aspects of the prompt (when clean)
 }

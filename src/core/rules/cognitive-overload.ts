@@ -1,11 +1,12 @@
 /**
- * Regra: cognitive-overload
+ * Rule: cognitive-overload
  *
- * Situação: muitas instruções competindo por atenção do agente. Na prática,
- * 3 a 5 instruções por bloco e no máximo 10 no total tendem a ser os limites
- * onde a eficácia se mantém. Acima disso, o retorno é negativo.
+ * Situation: too many instructions competing for the agent's attention.
+ * In practice, 3-5 instructions per block and at most 10 in total tend
+ * to be the limits where effectiveness holds. Beyond that, the return
+ * is negative.
  *
- * Essa regra é global — analisa o documento inteiro, não linhas individuais.
+ * This rule is global — it analyzes the whole document, not individual lines.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
@@ -19,59 +20,63 @@ const WARNING_INSTRUCTIONS = 6;
 const MAX_CHARACTERS = 3000;
 const WARNING_CHARACTERS = 2000;
 
-// Prompts estruturados (workflows procedurais numerados ou prosa com seções
-// rotuladas em negrito) toleram mais sentenças porque cada bloco é um chunk
-// cognitivo explícito, não uma diretiva comportamental competindo por atenção.
+// Structured prompts (numbered procedural workflows or prose with
+// bold-labeled sections) tolerate more sentences because each block
+// is an explicit cognitive chunk, not a behavioral directive
+// competing for attention.
 const PROCEDURAL_MAX_INSTRUCTIONS = 25;
 const PROCEDURAL_WARNING_INSTRUCTIONS = 16;
 
 /*=========================================
-// Deteccao de linha de persona
+// Persona-line detection
 =========================================*/
 
 const PERSONA_PATTERN = /^(você é|tu é|eu sou|you are|i am|act as|atue como|tú eres|usted es|eres un|actúa como)\b/i;
 
 /*=========================================
-// Deteccao de prompt estruturado
+// Structured-prompt detection
 =========================================*/
 
-// Linha que começa com número + ponto/parêntese — passo de workflow
+// Line starting with a number + period/paren — workflow step
 const STEP_PATTERN = /^\s*\d+[.)]\s+\S/;
 
-// Rótulo de seção em negrito markdown — `**O que carregar:**`, `**Sinal de rodada boa:**`
-// Ancora a chunkificação cognitiva: cada rótulo é um bucket mental explícito,
-// então sentenças sob o rótulo não competem com as de outros buckets do mesmo jeito
-// que sentenças soltas competem entre si.
+// Markdown bold section label — `**What to load:**`, `**Good-round signal:**`
+// Anchors cognitive chunking: each label is an explicit mental bucket,
+// so sentences under the label don't compete with sentences under other
+// buckets the way loose sentences compete with each other.
 const BOLD_LABEL_PATTERN = /\*\*[^*\n]{2,60}:\*\*/g;
 
-// Rótulos de ênfase genérica — **Important:**, **Critical:**, **Note:**, **Warning:**
-// etc. — não indicam chunkificação estrutural: são "badges" de prioridade colados
-// na frente de instruções soltas. Contar como seção estrutural infla o threshold
-// e esconde cognitive-overload real.
+// Generic emphasis labels — **Important:**, **Critical:**, **Note:**,
+// **Warning:**, etc. — don't indicate structural chunking: they're
+// priority "badges" stuck in front of loose instructions. Counting
+// them as structural sections inflates the threshold and hides real
+// cognitive-overload.
 const EMPHASIS_ONLY_LABEL = /^\*\*\s*(important|importante|critical|crítico|critico|note|nota|warning|advertencia|aviso|reminder|lembrete|essential|essencial|esencial|caution|cuidado|tip|dica|consejo|info|attention|atenção|atencao|atención|atencion|obs|observação|observacao)\s*:\*\*$/i;
 
 /*=========================================
-// Deteccao de framing declarativo
+// Declarative-framing detection
 =========================================*/
 
-// Sentenças do tipo "O X é Y" / "A X é Y" / "Esse X é Y" / "The X is Y" /
-// "El X es Y" descrevem ou definem o alvo — são framing/setup, não diretivas
-// ao agente. Aparecem tipicamente na intro de um workflow ("A pergunta do
-// ciclo é...", "Esse workflow é o olho externo do sistema", "The goal is...")
-// e inflam o count de instruções sem representar carga cognitiva competitiva.
+// Sentences like "O X é Y" / "A X é Y" / "Esse X é Y" / "The X is Y" /
+// "El X es Y" describe or define the target — they're framing/setup,
+// not directives to the agent. They typically show up at the top of a
+// workflow ("The cycle question is...", "This workflow is the system's
+// outer eye", "The goal is...") and inflate the instruction count
+// without representing competitive cognitive load.
 //
-// Conservador: só casa abertura com artigo/demonstrativo + NP curto (até 4
-// tokens) + cópula. Não casa verbos de ação ("A regra detecta X"), nem
-// sentenças com modais ("O agente deve X" — isso é diretiva legítima).
-// Usamos classe explícita com acentos latinos em vez de \b, porque \b não
-// delimita palavra em torno de caracteres acentuados (é/são) em regex JS.
+// Conservative: only matches an opening with article/demonstrative +
+// short NP (up to 4 tokens) + copula. Doesn't match action verbs
+// ("The rule detects X"), nor sentences with modals ("The agent must X"
+// — that's a legitimate directive).
+// We use an explicit class with Latin accents instead of \b, because \b
+// doesn't delimit words around accented characters (é/são) in JS regex.
 const DECLARATIVE_FRAMING_PATTERN =
   /^(o|a|os|as|esse|essa|esses|essas|the|this|that|these|those|el|la|los|las|ese|esa|eso|esos|esas)\s+[\wáéíóúâêîôûãõàçñ-]+(\s+[\wáéíóúâêîôûãõàçñ-]+){0,3}\s+(é|são|is|are|es|son|era|eram|was|were)(\s|,|\.|:|!|\?|$)/i;
 
 function isDeclarativeFraming(text: string): boolean {
-  // Strip prefixos markdown comuns (blockquote, bullets, bold) antes do match,
-  // já que frames aparecem com frequência em workflows como `> **Esse X é Y**`
-  // ou `- A Y é Z`.
+  // Strip common markdown prefixes (blockquote, bullets, bold) before
+  // matching, since frames often show up in workflows like `> **Esse X é Y**`
+  // or `- A Y é Z`.
   const stripped = text
     .trim()
     .replace(/^(?:>\s*)+/, "")
@@ -82,14 +87,15 @@ function isDeclarativeFraming(text: string): boolean {
   return DECLARATIVE_FRAMING_PATTERN.test(stripped);
 }
 
-// Um texto é "estruturado" quando tem procedural numerado OU seções rotuladas
-// em negrito o suficiente pra indicar chunkificação deliberada.
+// A text counts as "structured" when it has either numbered procedural
+// steps OR bold-labeled sections in enough quantity to indicate deliberate
+// chunking.
 function isStructuredPrompt(text: string): boolean {
-  // Caso 1: parágrafo contínuo com "1. ... 2. ... 3. ..." inline
+  // Case 1: continuous paragraph with inline "1. ... 2. ... 3. ..."
   const inlineSteps = (text.match(/(?:^|[\s.])\d+\.\s+[A-ZÁÉÍÓÚÂÊÎÔÛÀÇ]/g) || []).length;
   if (inlineSteps >= 4) return true;
 
-  // Caso 2: linhas separadas, maioria começando com "N." ou "N)"
+  // Case 2: separate lines, most starting with "N." or "N)"
   const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
   const meaningful = lines.filter(
     (l) =>
@@ -103,11 +109,11 @@ function isStructuredPrompt(text: string): boolean {
     if (steps / meaningful.length >= 0.6) return true;
   }
 
-  // Caso 3: prosa estruturada com >=3 rótulos de seção em negrito
-  // (workflows reformados pós-2026-04, tutoriais chunkificados, system prompts
-  // bem organizados). Cada rótulo funciona como divisor cognitivo explícito.
-  // Exclui rótulos de ênfase genérica (**Important:**, **Note:** etc.) que
-  // não representam chunkificação real — só badges de prioridade.
+  // Case 3: structured prose with >=3 bold section labels
+  // (reformatted workflows post-2026-04, chunked tutorials, well-organized
+  // system prompts). Each label acts as an explicit cognitive divider.
+  // Excludes generic emphasis labels (**Important:**, **Note:**, etc.)
+  // that don't represent real chunking — just priority badges.
   const allBoldLabels = text.match(BOLD_LABEL_PATTERN) || [];
   const structuralLabels = allBoldLabels.filter((l) => !EMPHASIS_ONLY_LABEL.test(l));
   if (structuralLabels.length >= 3) return true;
@@ -116,7 +122,7 @@ function isStructuredPrompt(text: string): boolean {
 }
 
 /*=========================================
-// Contagem de instrucoes
+// Instruction counting
 =========================================*/
 
 function countInstructions(text: string): number {
@@ -134,7 +140,7 @@ function countInstructions(text: string): number {
     lineCount++;
   }
 
-  // Conta sentencas dentro de linhas longas (blocos de texto corrido)
+  // Counts sentences inside long lines (continuous prose blocks)
   let sentenceCount = 0;
   for (const line of lines) {
     const trimmed = line.trim();
@@ -147,18 +153,18 @@ function countInstructions(text: string): number {
     }
   }
 
-  // Usa o maior entre contagem por linha e por sentenca
+  // Uses the larger of per-line and per-sentence counts
   return Math.max(lineCount, sentenceCount);
 }
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const cognitiveOverload: Rule = {
   name: "cognitive-overload",
   description:
-    "Muitas instruções competindo por atenção, além dos limites onde a eficácia se mantém",
+    "Too many instructions competing for attention, beyond the limits where effectiveness holds",
   severity: "warning",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {
@@ -170,7 +176,7 @@ export const cognitiveOverload: Rule = {
     const maxInstructions = structured ? PROCEDURAL_MAX_INSTRUCTIONS : MAX_INSTRUCTIONS;
     const warningInstructions = structured ? PROCEDURAL_WARNING_INSTRUCTIONS : WARNING_INSTRUCTIONS;
 
-    // Checa quantidade de instruções
+    // Check instruction count
     if (instructionCount > maxInstructions) {
       diagnostics.push({
         rule: "cognitive-overload",
@@ -246,7 +252,7 @@ export const cognitiveOverload: Rule = {
       });
     }
 
-    // Checa tamanho total
+    // Check total length
     if (charCount > MAX_CHARACTERS) {
       diagnostics.push({
         rule: "cognitive-overload",

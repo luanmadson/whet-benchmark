@@ -1,10 +1,10 @@
 //=========================================
-// Provider: OpenAI GPT-5 nano (versão barata da nova geração)
+// Provider: OpenAI GPT-5 nano (cheap variant of the new generation)
 //
-// Autenticação: OPENAI_API_KEY no .env.local ou env do processo.
-// $0.05/M input, $0.40/M output — ~3x mais barato que gpt-4o-mini.
-// Análogo direto ao gpt-4o-mini mas na linhagem nova, pra testar se
-// o padrão "mini conservador" é da família ou da geração.
+// Auth: OPENAI_API_KEY in .env.local or process env.
+// $0.05/M input, $0.40/M output — roughly 3× cheaper than gpt-4o-mini.
+// Direct analog to gpt-4o-mini but in the new lineage, to test whether
+// the "conservative mini" pattern is family-bound or generation-bound.
 //=========================================
 
 "use strict";
@@ -24,11 +24,12 @@ function sleep(ms) {
 }
 
 async function submitOnce(fullPrompt, apiKey) {
-  // gpt-5-nano é reasoning: consome boa parte do budget em reasoning tokens
-  // antes de emitir output. Com `max_completion_tokens: 2048` e effort default,
-  // meta-prompts longos estouram o budget em reasoning e retornam output vazio.
-  // `reasoning_effort: "low"` reduz pra ~100-300 tokens de reasoning; 8000 dá
-  // folga pro output. Também não aceita temperature ≠ 1 (padrão reasoning).
+  // gpt-5-nano is a reasoning model: it eats a big chunk of the budget
+  // on reasoning tokens before emitting output. With `max_completion_tokens:
+  // 2048` and default effort, long meta-prompts blow the budget on reasoning
+  // and return empty output. `reasoning_effort: "low"` cuts reasoning down to
+  // ~100-300 tokens; 8000 leaves room for the output. Also doesn't accept
+  // temperature ≠ 1 (reasoning default).
   const body = {
     model: MODEL,
     messages: [{ role: "user", content: fullPrompt }],
@@ -48,7 +49,7 @@ async function submitOnce(fullPrompt, apiKey) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("OPENAI_API_KEY ausente");
+  if (!apiKey) throw new Error("OPENAI_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -57,7 +58,7 @@ async function submit(fullPrompt) {
     if (response.ok) {
       const data = await response.json();
       const text = data?.choices?.[0]?.message?.content;
-      if (!text) throw new Error(`OpenAI retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+      if (!text) throw new Error(`OpenAI returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
       return text.trim();
     }
 
@@ -76,7 +77,7 @@ async function submit(fullPrompt) {
     break;
   }
 
-  throw lastError || new Error("OpenAI: falha após retries");
+  throw lastError || new Error("OpenAI: failed after retries");
 }
 
 module.exports = {
@@ -84,8 +85,8 @@ module.exports = {
   displayName: "GPT-5 nano (OpenAI)",
   model: MODEL,
   tier: "paid",
-  origin: "OpenAI (EUA)",
-  description: "Tier nano da geração GPT-5 — barato e recente, contraste direto ao gpt-4o-mini legado",
+  origin: "OpenAI (USA)",
+  description: "Nano tier of the GPT-5 generation — cheap and recent, direct contrast to legacy gpt-4o-mini",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

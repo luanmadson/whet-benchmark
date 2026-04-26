@@ -1,15 +1,15 @@
 /**
- * Metadados das regras — fonte única de verdade.
+ * Rule metadata — single source of truth.
  *
- * Usado pela UI e pelo renderer.
- * Cada regra tem título curto (para headers) e intro contextual
- * (para explicar ao usuário quando aquilo é relevante).
+ * Used by the UI and the renderer.
+ * Each rule has a short title (for headers) and a contextual intro
+ * (to explain to the user when it's relevant).
  */
 
 import type { Diagnostic } from "./models";
 
 /*=========================================
-// Metadados das regras
+// Rule metadata
 =========================================*/
 
 export interface RuleMeta {
@@ -143,7 +143,7 @@ const RULE_META_EN: Record<string, RuleMeta> = {
   },
 };
 
-/** Retrocompatibilidade: alias para PT */
+/** Back-compat: alias to PT */
 export const RULE_META = RULE_META_PT;
 
 export function getRuleMeta(lang: "pt" | "en"): Record<string, RuleMeta> {
@@ -151,7 +151,7 @@ export function getRuleMeta(lang: "pt" | "en"): Record<string, RuleMeta> {
 }
 
 /*=========================================
-// Agrupamento por regra
+// Group by rule
 =========================================*/
 
 export function groupByRule(diagnostics: Diagnostic[]): Map<string, Diagnostic[]> {

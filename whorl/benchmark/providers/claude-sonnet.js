@@ -1,15 +1,17 @@
 //=========================================
-// Provider: Claude Sonnet (via CLI subprocess com --model sonnet)
+// Provider: Claude Sonnet (via CLI subprocess with --model sonnet)
 //
-// Espelho de claude.js, mas força o modelo Sonnet em vez do default
-// do CLI (que hoje é Opus). Permite ter Opus e Sonnet como providers
-// distintos no benchmark, o que é útil pra medir se o desempenho muda
-// em modelos do mesmo lab mas em tiers de capacidade diferentes.
+// Mirror of claude.js, but forces the Sonnet model instead of the CLI's
+// default (which is Opus today). Lets us keep Opus and Sonnet as
+// distinct providers in the benchmark, useful for measuring whether
+// performance changes between models from the same lab in different
+// capability tiers.
 //
-// Caveat editorial: ambos sobem via Claude Code CLI, então carregam o
-// system prompt do harness. O resultado aqui é "modelo-dentro-do-harness",
-// não modelo puro. Pra benchmark público, eventualmente precisa virar
-// chamada direta da Anthropic API com ANTHROPIC_API_KEY e sem o wrapper.
+// Editorial caveat: both run via the Claude Code CLI, so they carry the
+// harness's system prompt. The result here is "model-inside-the-harness",
+// not the model on its own. For a public benchmark, this should
+// eventually be a direct Anthropic API call with ANTHROPIC_API_KEY and
+// no wrapper.
 //=========================================
 
 "use strict";
@@ -35,7 +37,7 @@ async function submit(fullPrompt) {
     const timeoutMs = 180_000; // 3 min
     const timer = setTimeout(() => {
       proc.kill();
-      reject(new Error(`Claude Sonnet CLI timeout após ${timeoutMs / 1000}s`));
+      reject(new Error(`Claude Sonnet CLI timeout after ${timeoutMs / 1000}s`));
     }, timeoutMs);
 
     proc.stdout.on("data", (chunk) => (stdout += chunk.toString("utf8")));
@@ -43,7 +45,7 @@ async function submit(fullPrompt) {
 
     proc.on("error", (err) => {
       clearTimeout(timer);
-      reject(new Error(`Claude Sonnet CLI erro ao spawn: ${err.message}`));
+      reject(new Error(`Claude Sonnet CLI failed to spawn: ${err.message}`));
     });
 
     proc.on("close", (code) => {
@@ -54,7 +56,7 @@ async function submit(fullPrompt) {
       }
       const text = stdout.trim();
       if (!text) {
-        reject(new Error("Claude Sonnet CLI retornou stdout vazio"));
+        reject(new Error("Claude Sonnet CLI returned empty stdout"));
         return;
       }
       resolve(text);
@@ -74,8 +76,8 @@ module.exports = {
   displayName: "Claude Sonnet (via CLI)",
   model: MODEL,
   tier: "paid",
-  origin: "Anthropic (EUA)",
-  description: "Claude Sonnet via CLI — versão mais rápida e leve que Opus",
+  origin: "Anthropic (USA)",
+  description: "Claude Sonnet via CLI — faster and lighter sibling of Opus",
   isAvailable,
   submit,
 };

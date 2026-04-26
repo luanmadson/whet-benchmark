@@ -1,15 +1,15 @@
 //=========================================
 // Provider: Google Gemini (free tier via AI Studio)
 //
-// Autenticação: GEMINI_API_KEY no .env.local ou env do processo.
-// Obter chave: https://aistudio.google.com/app/apikey (free tier generoso)
+// Auth: GEMINI_API_KEY in .env.local or process env.
+// Get a key: https://aistudio.google.com/app/apikey (generous free tier)
 // Docs: https://ai.google.dev/gemini-api/docs/quickstart?lang=rest
 //=========================================
 
 "use strict";
 
-// gemini-2.0-flash não tem free tier ativo (limit 0 em projetos novos).
-// gemini-2.5-flash tem free tier e está disponível no endpoint.
+// gemini-2.0-flash has no active free tier (limit 0 on new projects).
+// gemini-2.5-flash has a free tier and is available on the endpoint.
 const MODEL = "gemini-2.5-flash";
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
@@ -18,7 +18,7 @@ function getApiKey() {
 }
 
 const MAX_RETRIES = 3;
-const BASE_BACKOFF_MS = 15000; // RPM free tier é apertado — backoff maior
+const BASE_BACKOFF_MS = 15000; // Free tier RPM is tight — bigger backoff
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -29,13 +29,13 @@ async function submitOnce(fullPrompt, apiKey) {
     contents: [{ parts: [{ text: fullPrompt }] }],
     generationConfig: {
       temperature: 0.3,
-      // 8192 dá headroom suficiente pros prompts reescritos mais longos
-      // do corpus. O corte anterior em 2048 estava truncando silenciosamente
-      // porque thinking tokens também contam no orçamento total.
+      // 8192 gives enough headroom for the corpus's longer rewritten
+      // prompts. The previous 2048 cap was silently truncating because
+      // thinking tokens also count against the total output budget.
       maxOutputTokens: 8192,
-      // Desabilita thinking — task de reescrita mecânica não se beneficia,
-      // e thinking consome orçamento de saída. Ver src/lib/providers/gemini.ts
-      // pra explicação completa.
+      // Disable thinking — mechanical rewrite tasks don't benefit,
+      // and thinking eats into the output budget. See
+      // src/lib/providers/gemini.ts for the full explanation.
       thinkingConfig: { thinkingBudget: 0 },
     },
   };
@@ -49,7 +49,7 @@ async function submitOnce(fullPrompt, apiKey) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("GEMINI_API_KEY ausente");
+  if (!apiKey) throw new Error("GEMINI_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -59,23 +59,23 @@ async function submit(fullPrompt) {
       const data = await response.json();
       const candidate = data?.candidates?.[0];
       if (!candidate) {
-        throw new Error(`Gemini retornou sem candidate: ${JSON.stringify(data).slice(0, 300)}`);
+        throw new Error(`Gemini returned no candidate: ${JSON.stringify(data).slice(0, 300)}`);
       }
 
-      // Fail-loud em MAX_TOKENS/SAFETY/RECITATION pra o benchmark não
-      // contabilizar output truncado como "resposta válida". Isso vazia os
-      // resultados históricos contra o Gemini.
+      // Fail-loud on MAX_TOKENS/SAFETY/RECITATION so the benchmark
+      // doesn't count truncated output as a "valid response". That
+      // would skew historical results against Gemini.
       if (candidate.finishReason === "MAX_TOKENS") {
-        throw new Error("Gemini cortou resposta por MAX_TOKENS — output truncado");
+        throw new Error("Gemini cut response on MAX_TOKENS — output truncated");
       }
       if (candidate.finishReason === "SAFETY" || candidate.finishReason === "RECITATION") {
-        throw new Error(`Gemini bloqueou resposta por filtro: ${candidate.finishReason}`);
+        throw new Error(`Gemini blocked response by filter: ${candidate.finishReason}`);
       }
 
-      // Concatena todas as parts com texto que NÃO são `thought: true`.
-      // Defesa em profundidade: mesmo com thinking desabilitado, Gemini
-      // pode retornar múltiplas parts, e pegar só `parts[0]` é um bug
-      // silencioso que deixa output parcial passar.
+      // Concatenate every text part that is NOT `thought: true`.
+      // Defense in depth: even with thinking disabled, Gemini can
+      // return multiple parts, and grabbing just `parts[0]` is a
+      // silent bug that lets partial output through.
       const parts = candidate.content?.parts || [];
       const text = parts
         .filter((p) => !p.thought && typeof p.text === "string")
@@ -83,13 +83,13 @@ async function submit(fullPrompt) {
         .join("");
 
       if (!text.trim()) {
-        throw new Error(`Gemini retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+        throw new Error(`Gemini returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
       }
       return text.trim();
     }
 
-    // 429 = rate limit. Gemini sinaliza "retry after Xs" no body do erro;
-    // parsear é complexo, então usa backoff exponencial determinístico.
+    // 429 = rate limit. Gemini signals "retry after Xs" in the error
+    // body; parsing it is complex, so we use deterministic exponential backoff.
     if (response.status === 429 && attempt < MAX_RETRIES) {
       const backoffMs = BASE_BACKOFF_MS * Math.pow(1.5, attempt); // 15s, 22s, 33s
       await sleep(backoffMs);
@@ -101,7 +101,7 @@ async function submit(fullPrompt) {
     break;
   }
 
-  throw lastError || new Error("Gemini: falha após retries");
+  throw lastError || new Error("Gemini: failed after retries");
 }
 
 module.exports = {
@@ -109,8 +109,8 @@ module.exports = {
   displayName: "Gemini 2.5 Flash",
   model: MODEL,
   tier: "free",
-  origin: "Google (EUA)",
-  description: "Modelo multimodal de referência do Google",
+  origin: "Google (USA)",
+  description: "Google's flagship multimodal model",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

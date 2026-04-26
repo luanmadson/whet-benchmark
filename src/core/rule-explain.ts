@@ -1,38 +1,39 @@
 /**
- * Gerador de explicação detalhada por diagnóstico — `explain-this-diagnostic`.
+ * Per-diagnostic detailed explanation generator — `explain-this-diagnostic`.
  *
- * Expande o card de cada diagnóstico com um before/after concreto e uma
- * referência externa ancorando o raciocínio. Inspirado em `eslint --rule`,
- * `biome explain` e `ruff --explain`, que mostram o código atual e o código
- * corrigido junto da motivação da regra.
+ * Expands each diagnostic card with a concrete before/after and an
+ * external reference anchoring the reasoning. Inspired by `eslint --rule`,
+ * `biome explain`, and `ruff --explain`, which show the current code and
+ * the corrected code alongside the rule's motivation.
  *
- * Puro: recebe `Diagnostic`, devolve texto. Não toca DOM, não importa React.
+ * Pure: takes a `Diagnostic`, returns text. Doesn't touch the DOM, doesn't
+ * import React.
  */
 
 import type { Diagnostic } from "./models";
 
 export interface RuleExplanation {
-  /** Before — trecho original problemático (pode ser multilinha). */
+  /** Before — original problematic excerpt (may be multiline). */
   before: string;
-  /** After — reformulação concreta derivada do `before`. Vazio se não aplicável. */
+  /** After — concrete rewrite derived from `before`. Empty if not applicable. */
   after: string;
-  /** Rótulo traduzido pra "Antes" (usado no dashboard da UI). */
+  /** Translated label for "Before" (used in the UI dashboard). */
   beforeLabel: string;
-  /** Rótulo traduzido pra "Depois". */
+  /** Translated label for "After". */
   afterLabel: string;
-  /** Âncora externa — referência pública ao padrão detectado. */
+  /** External anchor — public reference to the detected pattern. */
   reference?: { label: string; url: string };
 }
 
 type Lang = "pt" | "en" | "es";
 
 /*=========================================
-// Mapeamento por regra — transformação de highlight
+// Per-rule mapping — highlight transformation
 =========================================*/
 
-// Substitutos neutros para highlights imperativos comuns (imperative-overload,
-// threat-framing, command-over-question). Key: forma canônica do gatilho
-// (lowercase, sem acento). Value: par por idioma.
+// Neutral substitutes for common imperative highlights (imperative-overload,
+// threat-framing, command-over-question). Key: canonical trigger form
+// (lowercase, no accents). Value: per-language pair.
 const IMPERATIVE_REPLACEMENTS: Record<
   string,
   Record<Lang, string>
@@ -71,7 +72,7 @@ function replaceHighlight(original: string, highlight: string, replacement: stri
   const re = new RegExp(esc, "i");
   const match = original.match(re);
   if (!match) return original;
-  // Preserva a maiusculização do gatilho original
+  // Preserve the original trigger's casing
   const isUpperCase = match[0] === match[0].toUpperCase();
   const isCapitalized = match[0][0] === match[0][0].toUpperCase();
   let out = replacement;
@@ -81,7 +82,7 @@ function replaceHighlight(original: string, highlight: string, replacement: stri
 }
 
 /*=========================================
-// Rationale estendido por regra
+// Per-rule extended rationale
 =========================================*/
 
 const REFERENCES: Record<string, { label: string; url: string }> = {
@@ -136,7 +137,7 @@ const REFERENCES: Record<string, { label: string; url: string }> = {
 };
 
 /*=========================================
-// Rótulos por idioma
+// Labels per language
 =========================================*/
 
 const LABELS: Record<Lang, { before: string; after: string }> = {
@@ -146,7 +147,7 @@ const LABELS: Record<Lang, { before: string; after: string }> = {
 };
 
 /*=========================================
-// After generators por regra
+// Per-rule after generators
 =========================================*/
 
 function afterForImperative(d: Diagnostic, lang: Lang): string {
@@ -158,7 +159,7 @@ function afterForImperative(d: Diagnostic, lang: Lang): string {
 }
 
 function afterForRedundantDefault(d: Diagnostic, lang: Lang): string {
-  // Instrução redundante: o after é a remoção/omissão.
+  // Redundant instruction: the after is the removal/omission.
   const tags: Record<Lang, string> = {
     pt: "(pode ser omitido — já faz parte do comportamento padrão do modelo)",
     en: "(can be omitted — already part of the model's default behavior)",
@@ -169,7 +170,7 @@ function afterForRedundantDefault(d: Diagnostic, lang: Lang): string {
 
 function afterForRoleInflation(d: Diagnostic, lang: Lang): string {
   if (!d.highlight) return "";
-  // Remove o trecho inflacionado do original
+  // Remove the inflated portion from the original
   const withoutHighlight = d.original.replace(d.highlight, "").replace(/\s+/g, " ").trim();
   const suffixes: Record<Lang, string> = {
     pt: " (sem superlativos fictícios)",
@@ -180,7 +181,7 @@ function afterForRoleInflation(d: Diagnostic, lang: Lang): string {
 }
 
 function afterForConditionalReward(d: Diagnostic, lang: Lang): string {
-  // Remove a cláusula de recompensa
+  // Remove the reward clause
   const tags: Record<Lang, string> = {
     pt: "(cláusula de recompensa removida — o modelo não transaciona com promessas fictícias)",
     en: "(reward clause removed — the model doesn't transact with fictional promises)",
@@ -190,7 +191,7 @@ function afterForConditionalReward(d: Diagnostic, lang: Lang): string {
 }
 
 function afterForThreatFraming(d: Diagnostic, lang: Lang): string {
-  // Igual à imperative — se o highlight for uma palavra de ameaça, substituir
+  // Same as imperative — if the highlight is a threat word, substitute it
   const imp = afterForImperative(d, lang);
   if (imp) return imp;
   const tags: Record<Lang, string> = {
@@ -265,7 +266,7 @@ function afterForCognitiveOverload(d: Diagnostic, lang: Lang): string {
 }
 
 /*=========================================
-// Função pública
+// Public function
 =========================================*/
 
 export function explainDiagnostic(d: Diagnostic, lang: Lang): RuleExplanation {

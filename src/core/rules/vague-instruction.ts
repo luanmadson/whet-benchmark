@@ -1,15 +1,16 @@
 /**
- * Regra: vague-instruction
+ * Rule: vague-instruction
  *
- * Situação: instruções genéricas demais para ter efeito real. "Siga boas
- * práticas", "Seja profissional", "Use bom senso" — o modelo interpreta
- * como quiser, o que na prática significa que a instrução não muda nada.
+ * Situation: instructions too generic to have real effect. "Follow best
+ * practices", "Be professional", "Use common sense" — the model
+ * interprets it however, which in practice means the instruction
+ * doesn't change anything.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Padroes de instrucoes vagas
+// Vague-instruction patterns
 =========================================*/
 
 const VAGUE_PATTERNS: Array<{
@@ -370,13 +371,13 @@ const VAGUE_PATTERNS: Array<{
 ];
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const vagueInstruction: Rule = {
   name: "vague-instruction",
   description:
-    "Instruções genéricas demais para ter efeito real — o modelo interpreta como quiser",
+    "Instructions too generic to have real effect — the model interprets however it wants",
   severity: "info",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {

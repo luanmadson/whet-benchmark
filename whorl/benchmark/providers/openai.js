@@ -1,13 +1,13 @@
 //=========================================
-// Provider: OpenAI GPT-4o-mini (pay-as-you-go, top-up mínimo $5)
+// Provider: OpenAI GPT-4o-mini (pay-as-you-go, $5 minimum top-up)
 //
-// Autenticação: OPENAI_API_KEY no .env.local ou env do processo.
-// Obter chave: https://platform.openai.com → API keys
+// Auth: OPENAI_API_KEY in .env.local or process env.
+// Get a key: https://platform.openai.com → API keys
 // Docs: https://platform.openai.com/docs/api-reference/chat
 //
-// Trial automático foi descontinuado em meados de 2025. Contas novas
-// exigem cartão + top-up mínimo de $5. A uma média de ~$0.01 por run
-// full do corpus (gpt-4o-mini), $5 cobre ~500 runs completas.
+// Automatic trial was discontinued in mid-2025. New accounts require
+// a credit card + a $5 minimum top-up. At an average of ~$0.01 per
+// full corpus run (gpt-4o-mini), $5 covers about 500 full runs.
 //=========================================
 
 "use strict";
@@ -46,7 +46,7 @@ async function submitOnce(fullPrompt, apiKey) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("OPENAI_API_KEY ausente");
+  if (!apiKey) throw new Error("OPENAI_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -55,7 +55,7 @@ async function submit(fullPrompt) {
     if (response.ok) {
       const data = await response.json();
       const text = data?.choices?.[0]?.message?.content;
-      if (!text) throw new Error(`OpenAI retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+      if (!text) throw new Error(`OpenAI returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
       return text.trim();
     }
 
@@ -74,7 +74,7 @@ async function submit(fullPrompt) {
     break;
   }
 
-  throw lastError || new Error("OpenAI: falha após retries");
+  throw lastError || new Error("OpenAI: failed after retries");
 }
 
 module.exports = {
@@ -82,8 +82,8 @@ module.exports = {
   displayName: "GPT-4o mini (OpenAI)",
   model: MODEL,
   tier: "paid",
-  origin: "OpenAI (EUA)",
-  description: "Flagship cost-efficient da OpenAI — representa a filosofia RLHF pioneira do campo",
+  origin: "OpenAI (USA)",
+  description: "OpenAI's cost-efficient flagship — represents the RLHF philosophy that pioneered the field",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

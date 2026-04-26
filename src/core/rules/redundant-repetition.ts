@@ -1,18 +1,18 @@
 /**
- * Regra: redundant-repetition
+ * Rule: redundant-repetition
  *
- * Situação: mesma ideia repetida com palavras diferentes. "Não invente",
- * "Não alucine", "Apenas fatos reais" — são a mesma instrução dita três
- * vezes, inflando o prompt sem agregar.
+ * Situation: the same idea repeated with different words. "Don't invent",
+ * "Don't hallucinate", "Only real facts" — the same instruction said
+ * three times, inflating the prompt without adding anything.
  *
- * Detecção via grupos semânticos: instruções que pertencem ao mesmo grupo
- * e aparecem mais de uma vez provavelmente são redundantes entre si.
+ * Detection via semantic groups: instructions that belong to the same
+ * group and appear more than once are probably redundant with each other.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Grupos semanticos
+// Semantic groups
 =========================================*/
 
 const SEMANTIC_GROUPS: Array<{
@@ -181,13 +181,13 @@ interface Match {
 }
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const redundantRepetition: Rule = {
   name: "redundant-repetition",
   description:
-    "Mesma ideia repetida com palavras diferentes, inflando o prompt sem agregar",
+    "The same idea repeated with different words, inflating the prompt without adding anything",
   severity: "warning",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {
@@ -210,7 +210,7 @@ export const redundantRepetition: Rule = {
       }
     }
 
-    // Agrupa por grupo semântico e reporta onde há mais de uma ocorrência
+    // Group by semantic group and report where there's more than one match
     const grouped = new Map<string, Match[]>();
     for (const match of matches) {
       const list = grouped.get(match.groupId) || [];

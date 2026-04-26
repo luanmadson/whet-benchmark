@@ -1,73 +1,74 @@
 /**
- * Regra: command-over-question
+ * Rule: command-over-question
  *
- * Situação: instruções que dão comandos diretos sem explicar o propósito.
- * Quando o agente entende *por que* algo é pedido, ele pode se adaptar
- * a situações que o autor não previu. Comandos sem contexto produzem
- * adesão mecânica — o agente faz o que mandaram, não o que faz sentido.
+ * Situation: instructions that issue direct commands without explaining
+ * the purpose. When the agent understands *why* something is requested,
+ * it can adapt to situations the author didn't anticipate. Commands
+ * without context produce mechanical compliance — the agent does what
+ * it was told, not what makes sense.
  *
- * Reformular como pergunta ou observação convida o agente a avaliar
- * a intenção, o que tende a produzir comportamento mais inteligente.
+ * Reframing as a question or observation invites the agent to evaluate
+ * intent, which tends to produce smarter behavior.
  *
- * Essa regra não pega os imperativos fortes (NUNCA, SEMPRE, MUST) —
- * esses são da imperative-overload. Pega comandos moderados que
- * seriam mais eficazes com contexto.
+ * This rule doesn't catch hard imperatives (NEVER, ALWAYS, MUST) —
+ * those belong to imperative-overload. It catches moderate commands
+ * that would be more effective with context.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Padroes de deteccao
+// Detection patterns
 =========================================*/
 
 const PT_IMPERATIVE_STARTS = /^(use|utilize|adicione|implemente|verifique|valide|garanta|mantenha|evite|inclua|remova|aplique|siga|faça|crie|gere|produza|escreva|documente|teste|revise|priorize|prefira|assegure|certifique-se|considere|trate|formate|organize|estruture|otimize|minimize|maximize)/i;
 
-// Negações diretas sem propósito (PT)
+// Direct negations without purpose (PT)
 const PT_NEGATION_STARTS = /^não\s+\w+/i;
 
-// Verbos imperativos comuns (EN)
+// Common imperative verbs (EN)
 const EN_IMPERATIVE_STARTS = /^(use|add|implement|verify|validate|ensure|maintain|avoid|include|remove|apply|follow|make|create|generate|produce|write|document|test|review|prioritize|prefer|check|treat|format|organize|structure|optimize|minimize|maximize|handle|keep|return|output|provide|give|show|display|render|process|parse|convert|set|configure)/i;
 
-// Negações diretas sem propósito (EN)
+// Direct negations without purpose (EN)
 const EN_NEGATION_STARTS = /^(do not|don'?t)\s+\w+/i;
 
-// Verbos imperativos comuns (ES)
+// Common imperative verbs (ES)
 const ES_IMPERATIVE_STARTS = /^(usa |utiliza |añade |implementa |verifica |valida |garantiza |mantén |evita |incluye |elimina |asegúrate |proporciona |genera |crea |define |establece |configura |aplica |ejecuta )/i;
 
-// Negações diretas sem propósito (ES)
+// Direct negations without purpose (ES)
 const ES_NEGATION_STARTS = /^(no hagas |no uses |no incluyas |no utilices |no agregues |no menciones |no generes |no proporciones |nunca )/i;
 
-// Padrões que indicam que a instrução JÁ tem propósito/contexto
+// Patterns that indicate the instruction ALREADY has purpose/context
 const HAS_PURPOSE = /\b(porque|pois|para que|para evitar|para garantir|para manter|já que|visto que|uma vez que|dado que|sem antes|sem que|since|because|so that|in order to|to avoid|to ensure|to prevent|to maintain|given that|as this|this helps|this prevents|this ensures|without first|unless|isso ajuda|isso evita|isso garante|isso previne|tende a|costuma|pode ser|tends to|usually|might|consider|quando|when .+ then|ya que|puesto que|con el fin de|a fin de)\b/i;
 
-// Travessão longo (— ou --) seguido de justificativa/alternativa carrega
-// o propósito fora dos conectores clássicos: "Não inventar X — só usar Y",
-// "Não ajustar — o valor é ver o texto cru". Exige cláusula substantiva
-// após o travessão (≥12 caracteres) para não casar com parentéticas curtas.
-// `\b` não é confiável para tokens que terminam em acentuados (`só`, `razão`),
-// por isso o fim do marcador exige espaço, ponto ou vírgula explícitos.
+// Long dash (— or --) followed by justification/alternative carries
+// the purpose outside the classic connectors: "Não inventar X — só usar Y",
+// "Don't adjust — the value is seeing the raw text". Requires a substantive
+// clause after the dash (≥12 chars) so it doesn't match short parentheticals.
+// `\b` isn't reliable for tokens ending in accents (`só`, `razão`), so the
+// marker's end requires explicit space, period, or comma.
 const HAS_DASH_JUSTIFICATION = /\s[—–-]{1,2}\s+(só|apenas|pois|porque|para|o que|o valor|o ponto|o objetivo|a ideia|a razão|o motivo|assim|dessa forma|desse modo|only|just|because|so that|for|the reason|the point|the goal|the idea|the value|solo|ya que|puesto que|el motivo|la razón|el objetivo|la idea|el valor|el punto|de ese modo|de esa forma)(\s|[.,]).{12,}/i;
 
-// Padrões que indicam tom sugestivo ou interrogativo (já ok)
+// Patterns that indicate suggestive or interrogative tone (already fine)
 const HAS_SUGGESTIVE_TONE = /\b(tende a|costuma|pode ser|considere|talvez|geralmente|preferencialmente|quando possível|se fizer sentido|tends to|usually|might|perhaps|consider|when possible|if it makes sense|ideally|tiende a|suele|puede ser|considere|tal vez|quizás|generalmente|preferentemente|cuando sea posible|si tiene sentido)\b|\?$/i;
 
-// Padrões de configuração legítima (comando direto é adequado)
+// Legitimate configuration patterns (direct command is appropriate)
 const IS_CONFIGURATION = /\b(responda? em|respond in|formato|format:|output:|idioma|language:|tom:|tone:|persona:|papel:|role:|contexto:|context:)\b/i;
 
-// Padrões de persona/contexto (não é comando)
+// Persona/context patterns (not a command)
 const IS_PERSONA = /^(você é|tu é|eu sou|you are|i am|act as|atue como|contexto:|context:)\b/i;
 
-// Comandos com complemento especifico e detalhado (nao sao genericos)
+// Commands with specific, detailed complement (not generic)
 const HAS_SPECIFIC_COMPLEMENT = /^(analise|priorize|use|formate|considere|mantenha|analyze|prioritize|format|consider|maintain|keep|handle|avoid|usa|utiliza|configura|mantén|evita|verifica)\b.{20,}/i;
 
-// Negações que contenham especificação contrária (ex: "that contradicts", "que danifique")
+// Negations that include a contrary specification (e.g.: "that contradicts", "que danifique")
 const NEGATION_HAS_CONSEQUENCE = /\b(that\s+(contradicts?|damages?|harms?|violates?|breaks?)|que\s+(contradiz|danifiqu|prejudiqu|viole|quebre|compromet))\b/i;
 
-// Já pegos por imperative-overload
+// Already caught by imperative-overload
 const ALREADY_IMPERATIVE = /\b(NUNCA|SEMPRE|NEVER|ALWAYS|MUST|FORBIDDEN|PROIBIDO|É OBRIGATÓRIO|OBRIGATORIAMENTE|REQUIRED|JAMAIS)\b|\b(sob nenhuma (hipótese|circunstância)|em hipótese alguma|under no circumstances|it is (essential|critical|imperative|vital)|at all times|[ÉEée] (essencial|crítico|imprescindível|vital|fundamental|imperativo|indispensável)|a todo (momento|instante|tempo)|o tempo (todo|inteiro)|em todas as (interações|situações|respostas|ocasiões))\b/i;
 
 /*=========================================
-// Tips de orientacao
+// Reformulation tips
 =========================================*/
 
 const TIP_PT =
@@ -82,7 +83,7 @@ const TIP_ES =
   "Agregar el motivo de la instrucción (\"...porque tiende a causar X\") " +
   "o reformular como observación suele producir un cumplimiento más inteligente.";
 
-// Heurística simples: se a linha começa com verbo PT, tip em PT; ES, tip em ES; senão, EN
+// Simple heuristic: if the line starts with a PT verb, PT tip; ES, ES tip; otherwise EN
 const PT_LINE_START = /^(use|utilize|adicione|implemente|verifique|valide|garanta|mantenha|evite|inclua|remova|aplique|siga|faça|crie|gere|produza|escreva|documente|teste|revise|priorize|prefira|assegure|certifique-se|considere|trate|formate|organize|estruture|otimize|minimize|maximize)/i;
 
 function getTip(line: string, lang?: string): string {
@@ -91,14 +92,14 @@ function getTip(line: string, lang?: string): string {
 }
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const commandOverQuestion: Rule = {
   name: "command-over-question",
   description:
-    "Instruções que comandam sem explicar o propósito — o agente adere " +
-    "mecanicamente em vez de entender a intenção e se adaptar",
+    "Instructions that command without explaining the purpose — the agent " +
+    "complies mechanically instead of understanding intent and adapting",
   severity: "info",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {

@@ -1,17 +1,17 @@
 //=========================================
 // Provider: OpenAI GPT-5.5 (flagship reasoning, pay-as-you-go)
 //
-// Autenticação: OPENAI_API_KEY no .env.local ou env do processo.
-// Lançado em 2026-04-23 como sucessor do gpt-5.4. Mudança relevante
-// pro integrador: a 5.5 faz reasoning por padrão — a primeira run aqui
-// devolveu HTTP 400 em 62/62 porque a config inicial imitava o 5.4
-// (chat, com `temperature: 0.3`). Modelos reasoning não aceitam
-// temperature; a documentação da OpenAI expõe `reasoning_effort` como
-// controle análogo. O default do modelo é "medium"; aqui usamos "low"
-// pra manter comparabilidade com o provider gpt-5-nano (também reasoning
-// rodado em low no benchmark). `max_completion_tokens: 8000` acomoda
-// reasoning tokens + output do prompt reescrito. Preço dobrou em relação
-// ao 5.4: $5/M input, $30/M output.
+// Auth: OPENAI_API_KEY in .env.local or process env.
+// Released on 2026-04-23 as the successor to gpt-5.4. Relevant change
+// for integrators: 5.5 does reasoning by default — the first run here
+// returned HTTP 400 on 62/62 because the initial config copied 5.4's
+// (chat, with `temperature: 0.3`). Reasoning models don't accept
+// temperature; OpenAI's docs expose `reasoning_effort` as the
+// analogous control. The model's default is "medium"; we use "low"
+// here to keep comparability with the gpt-5-nano provider (also a
+// reasoning model run at low in the benchmark). `max_completion_tokens:
+// 8000` accommodates reasoning tokens + the rewritten-prompt output.
+// Price doubled vs 5.4: $5/M input, $30/M output.
 //=========================================
 
 "use strict";
@@ -50,7 +50,7 @@ async function submitOnce(fullPrompt, apiKey) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("OPENAI_API_KEY ausente");
+  if (!apiKey) throw new Error("OPENAI_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -59,7 +59,7 @@ async function submit(fullPrompt) {
     if (response.ok) {
       const data = await response.json();
       const text = data?.choices?.[0]?.message?.content;
-      if (!text) throw new Error(`OpenAI retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+      if (!text) throw new Error(`OpenAI returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
       return text.trim();
     }
 
@@ -78,7 +78,7 @@ async function submit(fullPrompt) {
     break;
   }
 
-  throw lastError || new Error("OpenAI: falha após retries");
+  throw lastError || new Error("OpenAI: failed after retries");
 }
 
 module.exports = {
@@ -86,8 +86,8 @@ module.exports = {
   displayName: "GPT-5.5 (OpenAI)",
   model: MODEL,
   tier: "paid",
-  origin: "OpenAI (EUA)",
-  description: "Iteração flagship reasoning sucessora do gpt-5.4 — mede se o salto pra reasoning por padrão na linhagem 5.5 mantém o ganho de meta-prompt-following",
+  origin: "OpenAI (USA)",
+  description: "Reasoning-flagship successor to gpt-5.4 — measures whether the shift to reasoning-by-default in the 5.5 line preserves the meta-prompt-following gains",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

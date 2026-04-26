@@ -1,8 +1,8 @@
 //=========================================
-// Provider: Groq (free tier, inferência muito rápida)
+// Provider: Groq (free tier, very fast inference)
 //
-// Autenticação: GROQ_API_KEY no .env.local ou env do processo.
-// Obter chave: https://console.groq.com/keys (free tier diário)
+// Auth: GROQ_API_KEY in .env.local or process env.
+// Get a key: https://console.groq.com/keys (daily free tier)
 // Docs: https://console.groq.com/docs/api-reference#chat-create
 //=========================================
 
@@ -16,7 +16,7 @@ function getApiKey() {
 }
 
 const MAX_RETRIES = 3;
-const BASE_BACKOFF_MS = 8000; // Groq free tem TPM restritivo — backoff precisa ser generoso
+const BASE_BACKOFF_MS = 8000; // Groq's free tier has restrictive TPM — backoff needs to be generous
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -44,7 +44,7 @@ async function submitOnce(fullPrompt, apiKey) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("GROQ_API_KEY ausente");
+  if (!apiKey) throw new Error("GROQ_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -53,13 +53,13 @@ async function submit(fullPrompt) {
     if (response.ok) {
       const data = await response.json();
       const text = data?.choices?.[0]?.message?.content;
-      if (!text) throw new Error(`Groq retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+      if (!text) throw new Error(`Groq returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
       return text.trim();
     }
 
-    // 429 é rate limit — tenta novamente com backoff exponencial.
-    // Usa `retry-after` header se o provider informar; caso contrário,
-    // faz backoff determinístico. Groq informa retry-after em alguns casos.
+    // 429 is rate limit — retry with exponential backoff.
+    // Uses the `retry-after` header if the provider sends one; otherwise
+    // falls back to deterministic backoff. Groq sometimes includes retry-after.
     if (response.status === 429 && attempt < MAX_RETRIES) {
       const retryAfterHeader = response.headers.get("retry-after");
       const retryAfterSec = retryAfterHeader ? parseFloat(retryAfterHeader) : null;
@@ -70,13 +70,13 @@ async function submit(fullPrompt) {
       continue;
     }
 
-    // Outros status code ou retries esgotados — erro final
+    // Other status codes or retries exhausted — final error
     const errText = await response.text().catch(() => "");
     lastError = new Error(`Groq HTTP ${response.status}: ${errText.slice(0, 300)}`);
     break;
   }
 
-  throw lastError || new Error("Groq: falha após retries");
+  throw lastError || new Error("Groq: failed after retries");
 }
 
 module.exports = {
@@ -84,8 +84,8 @@ module.exports = {
   displayName: "Llama 3.3 70B (Groq)",
   model: MODEL,
   tier: "free",
-  origin: "Meta (EUA) via Groq",
-  description: "Llama open-source com inferência em hardware LPU da Groq",
+  origin: "Meta (USA) via Groq",
+  description: "Open-source Llama with inference on Groq's LPU hardware",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

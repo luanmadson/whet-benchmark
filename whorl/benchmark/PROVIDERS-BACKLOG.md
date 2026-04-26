@@ -1,134 +1,134 @@
-# Backlog de providers pro benchmark
+# Provider backlog for the benchmark
 
-Arquivo **provisório e informal** — consolida as pesquisas de free tiers feitas em conversa pra orientar decisões futuras de expansão do corpus de providers. Cadastro, geração de chave e configuração de `.env.local` são trabalho manual. Este documento serve como mapa do terreno, não roadmap comprometido.
+**Provisional and informal** file — consolidates the free-tier research done in conversation to guide future decisions on expanding the provider corpus. Signup, key generation, and `.env.local` configuration are manual work. This document is a map of the terrain, not a committed roadmap.
 
-## Critério editorial (relembre antes de adicionar)
+## Editorial criterion (revisit before adding)
 
-O Whet Benchmark mede **meta-prompt-following sob pressão pra preservar intenção** — uma capacidade, não um ranking de inteligência. Provider novo só agrega sinal quando traz **família de modelo distinta** (filosofia de treino, arquitetura ou lab diferente). Rodar o mesmo modelo em infra diferente não agrega, exceto se for pra sustentar uma sub-tese explícita de infra-independência. Ver `whorl/benchmark/README.md` → tese e "O que este benchmark NÃO é".
+The Whet Benchmark measures **meta-prompt-following under pressure to preserve intent** — a capability, not an intelligence ranking. A new provider only adds signal when it brings a **distinct model family** (different training philosophy, architecture, or lab). Running the same model on different infra adds nothing, except to support an explicit sub-thesis about infra independence. See `whorl/benchmark/README.md` → thesis and "What this benchmark is NOT".
 
-## Estado atual
+## Current state
 
-Já no corpus: Gemini (Google), Mistral (Mistral), Llama 3.3 70B (Meta via Groq), **Claude Opus 4.7 + Sonnet (Anthropic via CLI)**, DeepSeek V3 + R1 (DeepSeek), Jamba Large 1.7 (AI21), Command A (Cohere), GPT-4o mini + GPT-5.4 + GPT-5.5 + GPT-5 nano (OpenAI). 8 famílias (4 modelos OpenAI pra comparar gerações e tiers), todos ocidentais exceto DeepSeek.
+Already in the corpus: Gemini (Google), Mistral (Mistral), Llama 3.3 70B (Meta via Groq), **Claude Opus 4.7 + Sonnet (Anthropic via CLI)**, DeepSeek V3 + R1 (DeepSeek), Jamba Large 1.7 (AI21), Command A (Cohere), GPT-4o mini + GPT-5.4 + GPT-5.5 + GPT-5 nano (OpenAI). 8 families (4 OpenAI models to compare generations and tiers), all Western except DeepSeek.
 
-Em standby: **Grok 4.20 Reasoning (xAI)** — provider implementado e testado, mas aguardando decisão sobre Data Sharing opt-in (ver seção Tier 1 abaixo).
+In standby: **Grok 4.20 Reasoning (xAI)** — provider implemented and tested, but waiting on the Data Sharing opt-in decision (see Tier 1 below).
 
-> **DeepSeek V3 + R1 integrados** (abril/2026, Run 9). A hipótese do backlog foi testada: *reasoning ajuda ou atrapalha numa tarefa mecânica de reescrita?* → **quase indiferente**. R1 entregou delta médio de +40.6 contra +39.7 de V3 — vantagem de ~1 ponto de score a custo ~2.6× maior por chamada (reasoning_content consome o budget de output). Sinal: pra esta tarefa específica, reasoning não vale o custo.
+> **DeepSeek V3 + R1 integrated** (April 2026, Run 9). The backlog hypothesis was tested: *does reasoning help or hurt on a mechanical rewrite task?* → **almost indifferent**. R1 delivered an average delta of +40.6 against V3's +39.7 — a roughly 1-point edge at ~2.6× the cost per call (reasoning_content eats into the output budget). Signal: for this specific task, reasoning isn't worth the cost.
 >
-> **Trial defasado.** A informação "5M tokens de trial sem cartão" deste backlog não se aplica mais. Contas novas criadas hoje retornam `HTTP 402 Insufficient Balance` na primeira chamada. Top-up mínimo de **$2 USD** via PayPal/cartão/Alipay/WeChat em [`platform.deepseek.com/top_up`](https://platform.deepseek.com/top_up) destrava a conta. O custo real da operação é irrisório (~$0.03 por rodada full do corpus com V3), mas a fricção editorial deixou de ser "zero cadastro".
+> **Trial outdated.** The "5M trial tokens, no card" line in this backlog no longer applies. New accounts created today return `HTTP 402 Insufficient Balance` on the first call. A **$2 USD** minimum top-up via PayPal/card/Alipay/WeChat at [`platform.deepseek.com/top_up`](https://platform.deepseek.com/top_up) unlocks the account. Real-world cost is trivial (~$0.03 per full corpus run with V3), but the editorial friction is no longer "zero signup".
 
-> **Zhipu GLM descartado** (abril/2026). Portal principal (`open.bigmodel.cn`) inacessível para usuários brasileiros. Portal internacional (`z.ai`) existe mas acrescenta fricção desnecessária. Valor editorial marginal frente ao DeepSeek já no corpus. Provider `zhipu.js` criado mas não recomendado para uso.
+> **Zhipu GLM dropped** (April 2026). Main portal (`open.bigmodel.cn`) inaccessible for Brazilian users. International portal (`z.ai`) exists but adds unnecessary friction. Marginal editorial value next to DeepSeek already in the corpus. Provider `zhipu.js` exists but isn't recommended for use.
 
-## Tier 1 — maior ganho por esforço
+## Tier 1 — biggest gain per effort
 
-### ~~AI21 Jamba (Large + Mini)~~ ✅ integrado (abril/2026)
-- Provider `ai21.js` criado, registrado no runner. Modelo `jamba-large-1.7`, endpoint `api.ai21.com/studio/v1/chat/completions`. Env var: `AI21_API_KEY`.
+### ~~AI21 Jamba (Large + Mini)~~ ✅ integrated (April 2026)
+- Provider `ai21.js` created, registered in the runner. Model `jamba-large-1.7`, endpoint `api.ai21.com/studio/v1/chat/completions`. Env var: `AI21_API_KEY`.
 
-### xAI Grok ⏸️ standby (abril/2026)
-- Provider `grok.js` implementado (modelo `grok-4.20-reasoning`, endpoint `api.x.ai/v1/responses` — Responses API, shape `{ model, input }`, não é OpenAI-compat). Env var: `XAI_API_KEY`.
-- **Desregistrado do runner** (linha comentada em `runner.js`). Pra reativar: descomentar o `require("./providers/grok")`.
-- Hipótese a validar quando rodar: alinhamento menos restritivo → melhor preservação da meta-instrução de reescrita (menor instinto RLHF de "suavizar" o prompt original).
-- **Trial automático não existe mais.** A informação "$25 em créditos de trial, sem cartão" deste backlog **está defasada**. Contas novas começam com zero crédito e a primeira chamada retorna `HTTP 403 "team doesn't have credits or licenses"`.
-- **Caminho de desbloqueio (Data Sharing for Credits).** `console.x.ai` → Settings → Data Sharing → toggle "Share API Inputs for Model Training". Libera $150/mês em créditos renováveis. Pré-requisitos:
-  - **Top-up mínimo de $5** na conta antes do toggle ficar elegível (one-shot, não recorrente).
-  - Só admins do team conseguem ativar.
-  - Decisão **irreversível**: uma vez opt-in, não tem opt-out.
-  - Países elegíveis (Brasil geralmente está, confirmar no próprio toggle).
-- **Trade-off editorial:** aceitável pro corpus (prompts do corpus já são públicos em `results.json`), então o data sharing não compromete nada que ainda não esteja commitado. $5 one-shot libera centenas de runs full por mês.
-- **Decisão adiada** em abril/2026 — aguarda definição sobre top-up + opt-in.
+### xAI Grok ⏸️ standby (April 2026)
+- Provider `grok.js` implemented (model `grok-4.20-reasoning`, endpoint `api.x.ai/v1/responses` — Responses API, shape `{ model, input }`, not OpenAI-compatible). Env var: `XAI_API_KEY`.
+- **Unregistered from the runner** (commented line in `runner.js`). To re-enable: uncomment `require("./providers/grok")`.
+- Hypothesis to validate when running: less restrictive alignment → better preservation of the rewrite meta-instruction (less RLHF-driven instinct to "soften" the original prompt).
+- **Automatic trial no longer exists.** The "$25 in trial credits, no card" line in this backlog **is outdated**. New accounts start with zero credit and the first call returns `HTTP 403 "team doesn't have credits or licenses"`.
+- **Unblock path (Data Sharing for Credits).** `console.x.ai` → Settings → Data Sharing → toggle "Share API Inputs for Model Training". Unlocks $150/month in renewable credits. Prerequisites:
+  - **Minimum $5 top-up** on the account before the toggle becomes eligible (one-shot, not recurring).
+  - Only team admins can activate it.
+  - **Irreversible** decision: once opted in, no opt-out.
+  - Eligible countries (Brazil generally is, confirm in the toggle itself).
+- **Editorial trade-off:** acceptable for the corpus (corpus prompts are already public in `results.json`), so data sharing doesn't compromise anything that isn't already committed. $5 one-shot unlocks hundreds of full runs per month.
+- **Decision deferred** in April 2026 — pending a call on top-up + opt-in.
 
-## Tier 2 — completam gaps com retorno marginal menor
+## Tier 2 — fill gaps with smaller marginal return
 
-### ~~Cohere Command A~~ ✅ integrado (abril/2026)
-- Provider `cohere.js` criado, registrado no runner. Modelo `command-a-03-2025`, endpoint `api.cohere.com/v2/chat` (Chat API v2 — shape parecido com OpenAI, response via `message.content[].text`). Env var: `COHERE_API_KEY`.
-- Trial 1000 req/mês confirmado válido em abril/2026 — sem cartão, sem expirar, 20 calls/min no Chat.
-- **Backfill completo (abril/2026, 50/50 prompts)**: rodada inicial de 9 prompts do corpus v3 + backfill sobre 41 prompts históricos reconstruídos dos commits `45eb6900`, `74ab0aea`, `1ab8706d`, `7e067f12` de `corpus.json`. Paridade com todos os outros providers no aggregate cumulativo — 41/41 sucesso, sem nenhum erro.
-- **Resultado**: Δ médio cumulativo de **+41.0** (43.0 → 85.5 sobre 50 prompts). Posição 8/9 no leaderboard cumulativo — acima do Gemini 2.5 Flash (+40.0), abaixo dos DeepSeek (+44.6/+44.7). Hipótese de alinhamento distinto confirmada em parte: não destrói, mas fica consistentemente abaixo dos flagships — pode ser RLHF mais conservador que reescreve menos agressivamente.
-- **Observação operacional**: latências muito voláteis (5s a 88s na mesma run). Vale checar no eixo "Ao vivo" depois; se padrão persistir com usuários reais, é sinal de infra Cohere, não ruído.
+### ~~Cohere Command A~~ ✅ integrated (April 2026)
+- Provider `cohere.js` created, registered in the runner. Model `command-a-03-2025`, endpoint `api.cohere.com/v2/chat` (Chat API v2 — shape similar to OpenAI's, response via `message.content[].text`). Env var: `COHERE_API_KEY`.
+- 1000 req/month trial confirmed valid in April 2026 — no card, no expiry, 20 calls/min on Chat.
+- **Full backfill (April 2026, 50/50 prompts)**: initial run of 9 prompts from corpus v3 + backfill over 41 historical prompts reconstructed from commits `45eb6900`, `74ab0aea`, `1ab8706d`, `7e067f12` of `corpus.json`. Parity with every other provider in the cumulative aggregate — 41/41 success, no errors.
+- **Result**: cumulative average Δ of **+41.0** (43.0 → 85.5 over 50 prompts). Position 8/9 on the cumulative leaderboard — above Gemini 2.5 Flash (+40.0), below the DeepSeeks (+44.6/+44.7). Distinct-alignment hypothesis partially confirmed: doesn't destroy, but consistently lands below the flagships — possibly more conservative RLHF that rewrites less aggressively.
+- **Operational note**: very volatile latency (5s to 88s in the same run). Worth checking on the "Live" axis later; if the pattern persists with real users, that's Cohere infra signal, not noise.
 
-### ~~OpenAI (4 modelos: GPT-4o mini + GPT-5.4 + GPT-5.5 + GPT-5 nano)~~ ✅ integrados (abril/2026)
-Integração em três movimentos, com achado editorial forte sobre gradiente intra-família.
+### ~~OpenAI (4 models: GPT-4o mini + GPT-5.4 + GPT-5.5 + GPT-5 nano)~~ ✅ integrated (April 2026)
+Integrated in three movements, with a strong editorial finding about intra-family gradient.
 
-**Setup comum:** endpoint `api.openai.com/v1/chat/completions` (Chat Completions API padrão). Env var: `OPENAI_API_KEY`. Integração via pay-as-you-go puro — **trial automático descontinuado em meados de 2025** e Data Sharing Program terminou em 30/abr/2025. Exige cartão + top-up mínimo de $5. Custo real de um backfill full de 50 prompts: ~$0.05 (mini), ~$0.05 (nano), ~$1.13 (5.4).
+**Common setup:** endpoint `api.openai.com/v1/chat/completions` (standard Chat Completions API). Env var: `OPENAI_API_KEY`. Pure pay-as-you-go integration — **automatic trial discontinued in mid-2025** and the Data Sharing Program ended on 2025-04-30. Requires a card + $5 minimum top-up. Real-world cost of a full 50-prompt backfill: ~$0.05 (mini), ~$0.05 (nano), ~$1.13 (5.4).
 
-**Providers implementados:**
+**Implemented providers:**
 
-- `openai.js` → `gpt-4o-mini` (modelo legacy, aposentado do ChatGPT em 13/fev/2026 mas ainda disponível na API). Shape padrão: `temperature: 0.3`, `max_tokens: 2048`.
-- `openai-gpt-5-4.js` → `gpt-5.4` (flagship da geração anterior, lançado 5/mar/2026). Exige `max_completion_tokens` no lugar de `max_tokens`. Aceita `temperature: 0.3`. Preço: $2.50/M input, $15/M output.
-- `openai-gpt-5-5.js` → `gpt-5.5` (flagship atual, lançado 23/04/2026). **Reasoning-by-default** — recusou os 62 prompts da primeira run com `HTTP 400` porque a config inicial imitava o 5.4 (com temperature). Ajustado pra `reasoning_effort: "low"` + `max_completion_tokens: 8000` pra coerência com o nano. Default do modelo seria `"medium"`; usar `low` mantém comparabilidade interna entre providers reasoning do benchmark. Preço dobrou vs. 5.4: $5/M input, $30/M output. Contexto 1M.
-- `openai-gpt-5-nano.js` → `gpt-5-nano` (tier reasoning barato da geração nova). Exige `max_completion_tokens` (8000, porque consome muito em reasoning tokens) + `reasoning_effort: "low"`. **Não aceita temperature custom** (só `1` default) — trade-off declarado, em linha com Claude via CLI.
+- `openai.js` → `gpt-4o-mini` (legacy model, retired from ChatGPT on 2026-02-13 but still available via the API). Default shape: `temperature: 0.3`, `max_tokens: 2048`.
+- `openai-gpt-5-4.js` → `gpt-5.4` (previous-generation flagship, released 2026-03-05). Requires `max_completion_tokens` instead of `max_tokens`. Accepts `temperature: 0.3`. Pricing: $2.50/M input, $15/M output.
+- `openai-gpt-5-5.js` → `gpt-5.5` (current flagship, released 2026-04-23). **Reasoning-by-default** — refused 62/62 prompts on the first run with `HTTP 400` because the initial config copied 5.4's (with temperature). Adjusted to `reasoning_effort: "low"` + `max_completion_tokens: 8000` for consistency with nano. The model's default is `"medium"`; using `low` keeps internal comparability between the benchmark's reasoning providers. Price doubled vs 5.4: $5/M input, $30/M output. 1M context.
+- `openai-gpt-5-nano.js` → `gpt-5-nano` (cheap reasoning tier of the new generation). Requires `max_completion_tokens` (8000, because it eats heavily into reasoning tokens) + `reasoning_effort: "low"`. **Doesn't accept custom temperature** (`1` only by default) — declared trade-off, in line with Claude via CLI.
 
-**Resultado (50/50 prompts cada, zero erros):**
+**Result (50/50 prompts each, zero errors):**
 
-| Modelo | Δ cumulativo | Posição (de 12) |
+| Model | Cumulative Δ | Position (of 12) |
 |---|---|---|
-| GPT-5.4 | **+46.4** | 4º (top 5) |
-| GPT-5 nano | +37.0 | 11º |
-| GPT-4o mini | +34.2 | último |
+| GPT-5.4 | **+46.4** | 4th (top 5) |
+| GPT-5 nano | +37.0 | 11th |
+| GPT-4o mini | +34.2 | last |
 
-**Achado editorial:** gradiente de **12 pontos** dentro da mesma família entre mini legacy e flagship novo. Hipótese inicial ("OpenAI é sistemicamente conservadora em reescrita") era **parcialmente errada** — é só verdade pro tier barato e pra geração antiga. A OpenAI investiu pesado em instruction following no GPT-5, mas o ganho não desceu uniformemente pros tiers menores. GPT-5 nano melhorou só +2.8 sobre o gpt-4o-mini, enquanto o flagship pulou +12. Tipo de divergência intra-família que o Whet Benchmark está posicionado pra expor publicamente.
+**Editorial finding:** **12-point** gradient inside the same family between legacy mini and new flagship. The initial hypothesis ("OpenAI is systemically conservative on rewriting") was **partially wrong** — only true for the cheap tier and the older generation. OpenAI invested heavily in instruction following for GPT-5, but the gain didn't trickle down evenly to the smaller tiers. GPT-5 nano improved only +2.8 over gpt-4o-mini, while the flagship jumped +12. Exactly the kind of intra-family divergence the Whet Benchmark is positioned to expose publicly.
 
-**Hipótese residual:** o nano sendo reasoning-tier com `reasoning_effort: "low"` pode estar subutilizando o modelo — ensaiar com `reasoning_effort: "medium"` pra ver se a posição muda (trade-off: ~2x mais tokens de reasoning cobrados).
+**Residual hypothesis:** nano being a reasoning tier with `reasoning_effort: "low"` may be underutilizing the model — worth testing with `reasoning_effort: "medium"` to see if its position changes (trade-off: ~2× more reasoning tokens charged).
 
 ---
 
-**Abril/2026 · GPT-5.5 — 4º modelo da família (backfill igualitário)**
+**April 2026 · GPT-5.5 — 4th model in the family (equal-footing backfill)**
 
-Segundo movimento da integração OpenAI, feito no dia seguinte ao lançamento do 5.5 (23/04/2026).
+Second movement of the OpenAI integration, done the day after the 5.5 launch (2026-04-23).
 
-- **Cobertura:** backfill de 62 prompts (todos os que o 5.4 tinha rodado até então — 50 do histórico + 12 da Rodada 2). Entrada igualitária, 5.4 mantido sem alteração.
-- **Primeira tentativa:** 62/62 falharam com `HTTP 400: "Unsupported value: 'temperature' does not support 0.3"`. Revelou que o 5.5 é reasoning-by-default — diferença silenciosa vs. 5.4 que quem só trocar o model string vai descobrir do jeito difícil. Run inválida removida do `results.json` antes da segunda tentativa.
-- **Segunda tentativa:** 62/62 OK com `reasoning_effort: "low"` + sem temperature + `max_completion_tokens: 8000`.
-- **Resultado nos 62 prompts em comum:**
+- **Coverage:** 62-prompt backfill (every prompt 5.4 had run by then — 50 historical + 12 from Round 2). Equal-footing entry; 5.4 left untouched.
+- **First attempt:** 62/62 failed with `HTTP 400: "Unsupported value: 'temperature' does not support 0.3"`. Revealed that 5.5 is reasoning-by-default — a silent difference vs 5.4 that anyone just swapping the model string discovers the hard way. Invalid run removed from `results.json` before the second attempt.
+- **Second attempt:** 62/62 OK with `reasoning_effort: "low"` + no temperature + `max_completion_tokens: 8000`.
+- **Result on the 62 shared prompts:**
 
-| Métrica | GPT-5.4 | GPT-5.5 |
+| Metric | GPT-5.4 | GPT-5.5 |
 |---|---|---|
-| Δ médio | +47.0 | +47.3 |
-| Score depois (média) | 90.4 | 90.8 |
-| Latência média | 4.7s | 7.4s (+60%) |
-| Head-to-head | 20 vitórias | 24 vitórias (18 empates) |
-| Preço por 1M input/output | $2.50 / $15 | $5 / $30 (2×) |
+| Mean Δ | +47.0 | +47.3 |
+| Mean after-score | 90.4 | 90.8 |
+| Mean latency | 4.7s | 7.4s (+60%) |
+| Head-to-head | 20 wins | 24 wins (18 ties) |
+| Price per 1M input/output | $2.50 / $15 | $5 / $30 (2×) |
 
-**Achado editorial:** reasoning-by-default no flagship novo **não se pagou** pra meta-prompt-following. O Δ subiu 0.3 ponto — ruído numa escala que oscila 14 pontos em amostras pequenas. Confirma, de outro ângulo, o mesmo padrão visto com DeepSeek R1 vs. V3 (reasoning ~+1 ponto ao custo de 2-2.6× mais tokens): **pra tarefas mecânicas de reescrita preservando intenção, chain-of-thought interna não é o gargalo**. O que melhora o delta é seguir direito a meta-instrução, não pensar mais antes de responder.
+**Editorial finding:** reasoning-by-default on the new flagship **didn't pay off** for meta-prompt-following. Δ moved 0.3 points — noise on a scale that swings 14 points on small samples. Confirms, from another angle, the same pattern seen with DeepSeek R1 vs V3 (reasoning ~+1 point at 2-2.6× the tokens): **for mechanical rewriting tasks that preserve intent, internal chain-of-thought isn't the bottleneck**. What raises the delta is following the meta-instruction well, not thinking longer before responding.
 
-**Toque na hipótese residual do nano:** o 5.5 rodou com `reasoning_effort: "low"` (mesmo setting do nano) e ficou tecnicamente empatado com o 5.4 chat. Isso é evidência adicional de que rodar reasoning em `low` não **subutiliza** o modelo pra esse tipo de task — o teto de Δ parece ser outro, não o budget de reasoning. A hipótese não foi fechada, mas perdeu peso.
+**Touch on the nano residual hypothesis:** 5.5 ran with `reasoning_effort: "low"` (same setting as nano) and tied technically with 5.4 chat. That's additional evidence that running reasoning at `low` doesn't **underutilize** the model for this kind of task — the Δ ceiling looks like something else, not the reasoning budget. The hypothesis isn't closed, but it lost weight.
 
-**Post publicado:** [trywhet.com/blog/gpt-5-5-mesma-nota-mais-lento](https://trywhet.com/blog/gpt-5-5-mesma-nota-mais-lento).
+**Published post:** [trywhet.com/blog/gpt-5-5-mesma-nota-mais-lento](https://trywhet.com/blog/gpt-5-5-mesma-nota-mais-lento).
 
 ### Alibaba Qwen3 (via DashScope International)
-- **Acesso**: `dashscope-intl.aliyuncs.com`. 1M input + 1M output tokens free, 90 dias, endpoint de Singapura (endpoint US não tem free quota).
-- **Modelos**: `qwen3-max`, `qwen3-32b`, `qwen-plus`.
-- **Valor**: segunda família chinesa. Adiciona robustez ao cluster chinês sem ser redundância com DeepSeek (família distinta). Retorno marginal menor porque DeepSeek já representa o ângulo chinês.
-- **Implementação**: OpenAI-compatible no `compatible-mode/v1/chat/completions`.
-- **Env var sugerido**: `DASHSCOPE_API_KEY`.
+- **Access**: `dashscope-intl.aliyuncs.com`. 1M input + 1M output free tokens, 90 days, Singapore endpoint (US endpoint has no free quota).
+- **Models**: `qwen3-max`, `qwen3-32b`, `qwen-plus`.
+- **Value**: second Chinese family. Adds robustness to the Chinese cluster without being redundant with DeepSeek (distinct family). Smaller marginal return because DeepSeek already represents the Chinese angle.
+- **Implementation**: OpenAI-compatible at `compatible-mode/v1/chat/completions`.
+- **Suggested env var**: `DASHSCOPE_API_KEY`.
 
-## Tier 3 — valor editorial baixo ou fricção alta
+## Tier 3 — low editorial value or high friction
 
 ### MiniMax (M1 / M2)
-- **Acesso**: `platform.minimax.io`. Trial declarado até novembro/2026, sem cartão.
-- **Modelos**: `MiniMax-Text-01`, `MiniMax-M1`.
-- **Valor**: terceira família chinesa, especialização em long-context — não é central pra tarefa de reescrita de prompt. Valor editorial mais baixo.
-- **Implementação**: shape próprio, não OpenAI-compat direto.
-- **Env var sugerido**: `MINIMAX_API_KEY`.
+- **Access**: `platform.minimax.io`. Trial declared through November 2026, no card.
+- **Models**: `MiniMax-Text-01`, `MiniMax-M1`.
+- **Value**: third Chinese family, specialized in long-context — not central to the prompt-rewriting task. Lower editorial value.
+- **Implementation**: own shape, not directly OpenAI-compatible.
+- **Suggested env var**: `MINIMAX_API_KEY`.
 
-## Ordem de execução sugerida
+## Suggested execution order
 
-1. ~~**AI21 Jamba**~~ — integrado
-2. **xAI Grok** — ⏸️ standby (implementado mas desregistrado; aguarda top-up $5 + opt-in Data Sharing)
-3. ~~**Cohere**~~ — integrado
-4. ~~**OpenAI GPT-4o-mini**~~ — integrado (pay-as-you-go, $5 top-up)
-5. **Qwen3** — reforça o cluster chinês, 90 dias de free tier
-6. **MiniMax** — último, menor valor marginal
+1. ~~**AI21 Jamba**~~ — integrated
+2. **xAI Grok** — ⏸️ standby (implemented but unregistered; awaits $5 top-up + Data Sharing opt-in)
+3. ~~**Cohere**~~ — integrated
+4. ~~**OpenAI GPT-4o-mini**~~ — integrated (pay-as-you-go, $5 top-up)
+5. **Qwen3** — reinforces the Chinese cluster, 90-day free tier
+6. **MiniMax** — last, smallest marginal value
 
-## Não recomendados
+## Not recommended
 
-- **Zhipu GLM**: portal principal inacessível para usuários BR sem VPN; valor editorial sobreponível ao DeepSeek já no corpus.
-- **Cohere free tier para produção**: trial key é só experimental, uso comercial exige key paga.
-- **Moonshot Kimi**: exige $1 de recarga mínima, pequena fricção, valor marginal baixo.
-- **Reka**: sem free tier identificado.
-- **Hugging Face Inference API**: throttled agressivamente, mau encaixe pra uso one-shot do benchmark.
-- **Replicate**: créditos expiram, não persistente.
-- **Perplexity Sonar**: modelo RAG, categoria diferente da tarefa.
+- **Zhipu GLM**: main portal inaccessible to BR users without VPN; editorial value overlaps DeepSeek already in the corpus.
+- **Cohere free tier for production**: trial key is experimental only, commercial use needs a paid key.
+- **Moonshot Kimi**: requires $1 minimum top-up, small friction, marginal value.
+- **Reka**: no identified free tier.
+- **Hugging Face Inference API**: aggressively throttled, poor fit for the benchmark's one-shot use.
+- **Replicate**: credits expire, not persistent.
+- **Perplexity Sonar**: RAG model, different category from the task.
 
-## Observações
+## Notes
 
-Este backlog pode ficar defasado. Free tiers mudam, modelos são aposentados, novos labs aparecem. Revisar antes de onboarding novo — o estado aqui reflete abril/2026.
+This backlog can go stale. Free tiers change, models retire, new labs appear. Review before onboarding new providers — the state here reflects April 2026.

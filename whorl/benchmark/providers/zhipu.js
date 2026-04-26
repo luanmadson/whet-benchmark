@@ -1,8 +1,8 @@
 //=========================================
-// Provider: Zhipu GLM (free tier persistente, sem expiração)
+// Provider: Zhipu GLM (persistent free tier, no expiry)
 //
-// Autenticação: ZHIPU_API_KEY no .env.local ou env do processo.
-// Obter chave: https://open.bigmodel.cn (registro simples, free tier sem validade)
+// Auth: ZHIPU_API_KEY in .env.local or process env.
+// Get a key: https://open.bigmodel.cn (simple signup, free tier with no expiry)
 // Docs: https://open.bigmodel.cn/dev/api
 //=========================================
 
@@ -42,7 +42,7 @@ async function submitOnce(fullPrompt, apiKey) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("ZHIPU_API_KEY ausente");
+  if (!apiKey) throw new Error("ZHIPU_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -51,7 +51,7 @@ async function submit(fullPrompt) {
     if (response.ok) {
       const data = await response.json();
       const text = data?.choices?.[0]?.message?.content;
-      if (!text) throw new Error(`Zhipu retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+      if (!text) throw new Error(`Zhipu returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
       return text.trim();
     }
 
@@ -70,7 +70,7 @@ async function submit(fullPrompt) {
     break;
   }
 
-  throw lastError || new Error("Zhipu: falha após retries");
+  throw lastError || new Error("Zhipu: failed after retries");
 }
 
 module.exports = {
@@ -79,7 +79,7 @@ module.exports = {
   model: MODEL,
   tier: "free",
   origin: "Zhipu AI (China)",
-  description: "Modelo chinês com free tier persistente sem expiração",
+  description: "Chinese model with a persistent, no-expiry free tier",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

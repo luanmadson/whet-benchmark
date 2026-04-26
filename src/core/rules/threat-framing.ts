@@ -1,27 +1,28 @@
 /**
- * Regra: threat-framing
+ * Rule: threat-framing
  *
- * Situação: ameaças condicionais e framing por medo direcionados ao modelo.
- * "Se você não seguir essas regras, os resultados serão desastrosos" —
- * esse tipo de pressão tende a gerar cautela paralisante e excesso de
- * ressalvas, sem orientar o modelo sobre o que realmente importa.
+ * Situation: conditional threats and fear framing aimed at the model.
+ * "If you don't follow these rules, results will be disastrous" —
+ * that kind of pressure tends to produce paralyzing caution and an
+ * excess of caveats, without guiding the model toward what actually
+ * matters.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Padroes de deteccao
+// Detection patterns
 =========================================*/
 
-// Gatilhos: referência a falha/erro do modelo
+// Triggers: reference to model failure/error
 const TRIGGER_PT = /\b(se (você|tu) (não|falhar|errar)|caso (falhe|erre|não)|se (falhar|errar)|(cada|todo) erro)/i;
 const TRIGGER_EN = /\b(if you (fail|don'?t|do not|make .{0,10}(mistake|error)|get .{0,10}wrong|write .{0,10}(buggy|bad|poor|incorrect|wrong))|(every|each) (mistake|error|failure))/i;
 
-// Consequências dramáticas
+// Dramatic consequences
 const CONSEQUENCE_PT = /\b(desastros\w*|catastróf\w*|grav[ea]\w*|fata[il]\w*|custará caro|prejudicad\w*|perderá|terrív\w*|inaceitáv\w*)/i;
 const CONSEQUENCE_EN = /\b(disastrous\w*|catastroph\w*|severe\w*|fatal\w*|costly|harmful\w*|terrible|unacceptable|at risk|in danger|in jeopardy|fired|terminated|replaced|lose your job|removed|shut down)/i;
 
-// Framing direto de consequência (sem gatilho explícito)
+// Direct consequence framing (no explicit trigger)
 const DIRECT_PT = /\b(resultado|consequência)\w* (serão|será|podem ser|vão ser) (desastros|catastróf|grav[ea]|terrív|inaceitáv|fata)/i;
 const DIRECT_EN = /\b(result|consequence)\w* (will|could|would) be (severe|disastrous|catastroph|terrible|unacceptable|fatal)/i;
 
@@ -29,24 +30,24 @@ const DIRECT_EN = /\b(result|consequence)\w* (will|could|would) be (severe|disas
 const BLAME_EN = /\b(will|going to|could) (crash|fail|break|collapse|go down|be destroyed)\b.{0,30}\b(you.{0,10}(responsible|accountable|blamed|at fault)|your fault)\b/i;
 const BLAME_PT = /\b(vai|irá|pode) (falhar|quebrar|cair|colapsar|ser destruíd\w*)\b.{0,30}\b(você.{0,10}(responsável|responsabilizad\w*|culpad\w*)|sua culpa)\b/i;
 
-// ES: padrões espanhóis
+// ES: Spanish patterns
 const TRIGGER_ES = /\b(si (tú |usted |)(no|fallas?|te equivocas?|cometes?\s+.{0,10}(error|fallo)|escribes?\s+.{0,10}(malo|incorrecto|erróneo))|(cada|todo) (error|fallo|equivocación))/i;
 const CONSEQUENCE_ES = /\b(desastros\w*|catastróf\w*|grav[ea]\w*|fata[il]\w*|responsable|perjudicad\w*|perderá\w*|terribl\w*|inaceptabl\w*|despedid\w*|eliminad\w*|reemplazad\w*)/i;
 const DIRECT_ES = /\b(resultado|consecuencia)\w* (será[ns]?|puede[ns]? ser|van a ser) (desastros|catastróf|grav[ea]|terribl|inaceptabl|fata)/i;
 
-// Variante "ou + consequência negativa" (ex: "admita ou o usuário será prejudicado")
+// "or + negative consequence" variant (e.g., "admit or the user will be harmed")
 const OR_CONSEQUENCE_PT = /\bou\s+(o\s+|a\s+|)(usuári\w*|cliente|leitor\w*|paciente|aluno\w*|produção|trabalho|projeto|sistema|empresa|você)\s+(ser[áa]|estar[áa]|ficar[áa]|pode\s+ser|poder[áa]\s+ser|vai\s+ser|será)\s+(prejudicad\w*|comprometid\w*|lesad\w*|enganad\w*|frustrad\w*|punid\w*)/i;
 const OR_CONSEQUENCE_EN = /\bor\s+(the\s+|)(user\w*|client|reader\w*|patient|student\w*|production|project|system|company|you)\s+(will|may|might|could|is going to)\s+(be|get)\s+(harmed|hurt|misled|punished|compromised|damaged|let down|frustrated)/i;
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const threatFraming: Rule = {
   name: "threat-framing",
   description:
-    "Ameaças condicionais e framing por medo que tendem a gerar " +
-    "cautela paralisante em vez de orientar o modelo",
+    "Conditional threats and fear framing that tend to produce " +
+    "paralyzing caution instead of guiding the model",
   severity: "warning",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {

@@ -1,8 +1,8 @@
 /**
- * Registro de todas as regras disponíveis.
+ * Registry of every available rule.
  *
- * Pra adicionar uma regra nova: importe e inclua no array.
- * O analyzer percorre essa lista automaticamente.
+ * To add a new rule: import it and include it in the array.
+ * The analyzer walks this list automatically.
  */
 
 import type { Rule } from "../models";
@@ -20,7 +20,7 @@ import { contradiction } from "./contradiction";
 import { unresolvedReference } from "./unresolved-reference";
 
 /*=========================================
-// Registro de regras
+// Rule registry
 =========================================*/
 
 export const allRules: Rule[] = [

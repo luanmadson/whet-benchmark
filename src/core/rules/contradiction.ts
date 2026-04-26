@@ -1,22 +1,23 @@
 /**
- * Regra: contradiction
+ * Rule: contradiction
  *
- * Situação: duas instruções no mesmo prompt puxam para direções opostas —
- * "seja extremamente conciso" junto com "inclua todo o histórico",
- * "tom formal e acadêmico" junto com "descontraído e divertido",
- * "respond only in English" junto com "respond in the user's language".
- * Quando isso acontece, o agente é forçado a escolher uma das duas sem
- * entender qual priorizar, e o resultado tende a ser inconsistente.
+ * Situation: two instructions in the same prompt pull in opposite
+ * directions — "be extremely concise" alongside "include the full
+ * history", "formal academic tone" alongside "casual and fun",
+ * "respond only in English" alongside "respond in the user's language".
+ * When this happens, the agent is forced to pick one without
+ * understanding which to prioritize, and the result tends to be
+ * inconsistent.
  *
- * A regra procura pares curados de antônimos dentro do mesmo prompt.
- * Não tenta inferir contradição semântica aberta — só sinaliza pares
- * óbvios observados em prompts reais.
+ * The rule looks for curated antonym pairs inside the same prompt.
+ * It doesn't try to infer open-ended semantic contradiction — only
+ * flags obvious pairs observed in real prompts.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Pares de antonimos curados
+// Curated antonym pairs
 =========================================*/
 
 interface ContradictionPair {
@@ -27,9 +28,9 @@ interface ContradictionPair {
   axisEn: string;
 }
 
-// Cada par representa um eixo onde as duas direções raramente coexistem
-// sem sacrificar alguma coisa. Os padrões são conservadores de propósito:
-// só disparam quando ambos os lados aparecem no mesmo prompt.
+// Each pair represents an axis where the two directions rarely
+// coexist without sacrificing something. The patterns are deliberately
+// conservative: they only fire when both sides appear in the same prompt.
 const CONTRADICTION_PAIRS: ContradictionPair[] = [
   {
     id: "concise-vs-exhaustive",
@@ -104,28 +105,28 @@ const CONTRADICTION_PAIRS: ContradictionPair[] = [
 ];
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const contradiction: Rule = {
   name: "contradiction",
   description:
-    "Instruções que se opõem dentro do mesmo prompt, forçando o agente a " +
-    "escolher uma das duas sem entender qual priorizar — o resultado tende " +
-    "a ser inconsistente",
+    "Instructions that oppose each other inside the same prompt, forcing " +
+    "the agent to pick one without understanding which to prioritize — the " +
+    "result tends to be inconsistent",
   severity: "warning",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {
     const diagnostics: Diagnostic[] = [];
     const lang = ctx.lang;
-    const lower = text; // regex já é /i
+    const lower = text; // regex is already /i
 
     for (const pair of CONTRADICTION_PAIRS) {
       const leftMatch = lower.match(pair.left);
       const rightMatch = lower.match(pair.right);
       if (!leftMatch || !rightMatch) continue;
 
-      // Monta snippet combinando os dois lados para o diagnóstico
+      // Builds a snippet combining both sides for the diagnostic
       const snippetLeft = `"${leftMatch[0]}"`;
       const snippetRight = `"${rightMatch[0]}"`;
       const axis = lang === "en" ? pair.axisEn : pair.axis;

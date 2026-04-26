@@ -1,25 +1,25 @@
 /**
- * Regra: role-inflation
+ * Rule: role-inflation
  *
- * Situação: inflação de credenciais na atribuição de papel
- * ("você é o melhor especialista do mundo", "world-class expert
- * with 25 years of experience", "prêmios internacionais reconhecidos").
+ * Situation: credential inflation in role assignment ("you are the
+ * world's best specialist", "world-class expert with 25 years of
+ * experience", "internationally recognized awards").
  *
- * Esses superlativos não orientam o comportamento — o modelo já tenta
- * dar a melhor resposta possível por padrão. Ocupam espaço de atenção
- * sem mudar o que o agente faz, e podem disparar tom excessivamente
- * formal ou pretensioso.
+ * These superlatives don't shape behavior — the model already tries to
+ * give the best possible response by default. They take up attention
+ * space without changing what the agent does, and can trigger an overly
+ * formal or pretentious tone.
  *
- * O que costuma funcionar é descrever a *perspectiva* desejada
- * ("considere a resposta a partir do ponto de vista de alguém que
- * lida com lavouras de soja em clima tropical") em vez de hierarquia
- * fictícia ("o melhor agrônomo do mundo").
+ * What actually works is describing the desired *perspective* ("consider
+ * the answer from the standpoint of someone working with soybean fields
+ * in a tropical climate") instead of a fictional hierarchy ("the world's
+ * best agronomist").
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Padroes de inflacao de papel
+// Role inflation patterns
 =========================================*/
 
 const SUPERLATIVE_PT = /\b(o|a|os|as) (melhor|melhores|maior|maiores|mais (renomad|respeitad|premiad|reconhecid|experient|prestigiad)\w*) ([\w\u00C0-\u024F]+\s+){0,3}(do mundo|do brasil|do planeta|do país|da história|de todos os tempos)\b/i;
@@ -31,20 +31,20 @@ const YEARS_EN = /\b(with\s+)?(over\s+|more than\s+)?(\d{2,3}|twenty|thirty|fort
 const AWARDS_PT = /\b(prêmios?\s+(internacionais|nacionais|reconhecid)|laureado|premiado internacionalmente)\b/i;
 const AWARDS_EN = /\b(award.winning|internationally recognized|prize.winning|industry.leading)\b/i;
 
-// ES: padrões espanhóis
+// ES: Spanish patterns
 const SUPERLATIVE_ES = /\b(el|la|los|las) mejor(es)?\s+([\w\u00C0-\u024F]+\s+){0,3}(del mundo|del planeta|del país|de la historia|de todos los tiempos)\b/i;
 const YEARS_ES = /\b(con\s+)?(\d{2,3}|veinte|treinta|cuarenta|cincuenta)\s*(\+\s*)?a[ñn]os\s+de\s+experiencia\b/i;
 const AWARDS_ES = /\b(premios?\s+(internacionales|nacionales|reconocid)|galardonado|premiado internacionalmente)\b/i;
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const roleInflation: Rule = {
   name: "role-inflation",
   description:
-    "Inflação de credenciais no papel atribuído ao modelo — superlativos " +
-    "e anos de experiência fictícios que não orientam comportamento",
+    "Credential inflation in the role assigned to the model — superlatives " +
+    "and fictional years of experience that don't guide behavior",
   severity: "info",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {

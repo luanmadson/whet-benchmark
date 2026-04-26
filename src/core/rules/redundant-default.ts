@@ -1,15 +1,15 @@
 /**
- * Regra: redundant-default
+ * Rule: redundant-default
  *
- * Situação: instruções que repetem comportamento que o modelo já tem por
- * padrão. Além de desperdiçar espaço de atenção, pode tornar o agente
- * mais restritivo do que o desejado.
+ * Situation: instructions that repeat behavior the model already has
+ * by default. Besides wasting attention space, this can make the
+ * agent more restrictive than intended.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Padroes de comportamento padrao
+// Default-behavior patterns
 =========================================*/
 
 const DEFAULT_BEHAVIORS: Array<{
@@ -314,7 +314,7 @@ const DEFAULT_BEHAVIORS: Array<{
       "escenarios? ¿Incluir referencias? Un criterio concreto tiende a " +
       "producir resultados más predecibles que pedir detalle genérico.",
   },
-  // Meta-instruções: instruções sobre instruções (PT)
+  // Meta-instructions: instructions about instructions (PT)
   {
     pattern: /\b(antes de responder,? )?(releia|revise|confirme que está seguindo|certifique-se de que está seguindo|verifique sua resposta contra)\b/i,
     why: "pedir para o modelo reler ou verificar as próprias instruções é circular — se as instruções são claras, a verificação é implícita",
@@ -323,7 +323,7 @@ const DEFAULT_BEHAVIORS: Array<{
       "problema está nas instruções, não na falta de um meta-lembrete. " +
       "Esse espaço pode ser melhor usado por orientações concretas.",
   },
-  // Meta-instruções: instruções sobre instruções (ES)
+  // Meta-instructions: instructions about instructions (ES)
   {
     pattern: /\b(antes de responder,? )?(relee|revisa|confirma que estás siguiendo|asegúrate de que estás siguiendo|verifica tu respuesta contra)\b/i,
     why: "pedir al modelo que relea o verifique sus propias instrucciones es circular — si las instrucciones son claras, la verificación es implícita",
@@ -332,11 +332,11 @@ const DEFAULT_BEHAVIORS: Array<{
       "el problema está en las instrucciones, no en la falta de un meta-recordatorio. " +
       "Este espacio puede usarse mejor con orientaciones concretas.",
   },
-  // Meta-instruções: instruções sobre instruções (EN)
-  // Nota: "review" sozinho dispara falso positivo em substantivos legítimos
-  // ("code review", "peer review", "review comments"). Exige-se objeto
-  // explícito (rules|instructions|response|answer|output|work|prompt) para
-  // qualificar como meta-instrução.
+  // Meta-instructions: instructions about instructions (EN)
+  // Note: "review" alone triggers a false positive on legitimate nouns
+  // ("code review", "peer review", "review comments"). An explicit object
+  // is required (rules|instructions|response|answer|output|work|prompt)
+  // to qualify as a meta-instruction.
   {
     pattern: /\b(before responding,? )?(re-?read (?:the |your |my |these |this )?(?:rules|instructions|requirements|prompt|response|answer|output)|review (?:the |your |my |these |this )(?:rules|instructions|requirements|prompt|response|answer|output|work)|confirm you'?re following|double-?check .{0,30}(?:rules|instructions|requirements)|verify your (?:response|answer|output) against)\b/i,
     why: "asking the model to re-read or verify its own instructions is circular — if the instructions are clear, verification is implicit",
@@ -345,7 +345,7 @@ const DEFAULT_BEHAVIORS: Array<{
       "problem is with the instructions, not the lack of a meta-reminder. " +
       "This space could hold concrete guidance instead.",
   },
-  // Meta-instruções: "mantenha em mente" / "keep in mind"
+  // Meta-instructions: "mantenha em mente" / "keep in mind"
   {
     pattern: /\b(mantenha? (essas?|estas?) (instruções|regras) em mente|keep (these |the )?(rules |instructions )?in (mind|memory)|lembre-se (dessas?|destas?) (instruções|regras)|mantenha? em mente)\b/i,
     why: "o modelo processa todas as instruções automaticamente — pedir para 'manter em mente' não muda nada",
@@ -354,7 +354,7 @@ const DEFAULT_BEHAVIORS: Array<{
       "'keep them in mind' doesn't change behavior. The space could " +
       "hold guidance that genuinely shapes the response.",
   },
-  // Meta-instruções: "ten en mente" / "recuerda" (ES)
+  // Meta-instructions: "ten en mente" / "recuerda" (ES)
   {
     pattern: /\b(mant[eé]n (estas?|esas?) (instrucciones|reglas) en mente|ten (estas?|esas?) (instrucciones|reglas) en (mente|cuenta)|recuerda (estas?|esas?) (instrucciones|reglas)|ten en (mente|cuenta))\b/i,
     why: "el modelo procesa todas las instrucciones automáticamente — pedir que 'tenga en mente' no cambia nada",
@@ -366,14 +366,14 @@ const DEFAULT_BEHAVIORS: Array<{
 ];
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const redundantDefault: Rule = {
   name: "redundant-default",
   description:
-    "Instruções que repetem comportamento que o modelo já tem por padrão, " +
-    "desperdiçando atenção e podendo torná-lo mais restritivo",
+    "Instructions that repeat behavior the model already has by default, " +
+    "wasting attention and possibly making it more restrictive",
   severity: "info",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {

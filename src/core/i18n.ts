@@ -1,12 +1,12 @@
 /**
- * Dicionário de strings da UI.
+ * UI strings dictionary.
  *
- * O core já é bilíngue (diagnostics, renderer). Este módulo
- * cobre as strings fixas dos componentes visuais.
+ * The core is already bilingual (diagnostics, renderer). This module
+ * covers fixed strings used by the visual components.
  */
 
 /*=========================================
-// Tipos
+// Types
 =========================================*/
 
 export type UILang = "pt" | "en";
@@ -34,46 +34,46 @@ interface UIStrings {
   // LandingView
   heroLine1: string;
   heroLine2: string;
-  // heroBullet1/2/3: depreciados desde a adoção do HeroDemo (Option C).
-  // Mantidos no interface pra back-compat se forem reutilizados.
+  // heroBullet1/2/3: deprecated since adopting HeroDemo (Option C).
+  // Kept on the interface for back-compat if they get reused.
   heroBullet1: string;
   heroBullet2: string;
   heroBullet3: string;
-  // Privacidade é o único disclaimer que sobrevive entre o textarea e
-  // o leaderboard. Demais strings testSection* foram absorvidas pelo
-  // HeroDemo (que agora MOSTRA em vez de explicar).
+  // Privacy is the only disclaimer that survives between the textarea
+  // and the leaderboard. Other testSection* strings were absorbed by
+  // HeroDemo (which now SHOWS instead of explaining).
   testSectionPrivacy: string;
 
-  // Hero da home — eyebrow + h1 + sub-linhas dinâmicas
+  // Home hero — eyebrow + h1 + dynamic sub-lines
   homeEyebrow: string;
-  // heroLine1/2 mantidos pra back-compat; agora carregam o título
-  // estável da home (heroLine1 = h1, heroLine2 = subtítulo curto se usado).
+  // heroLine1/2 kept for back-compat; now they hold the stable home
+  // title (heroLine1 = h1, heroLine2 = short subtitle if used).
   heroFindingLoading: string;
-  // Template do finding dinâmico — placeholders {leader}, {delta},
-  // {models}, {prompts} são substituídos no render quando os dados
-  // de /api/benchmark chegam. Quando a API falha ou não tem dados,
-  // a linha some por inteiro (não há fallback inventado).
+  // Dynamic finding template — placeholders {leader}, {delta},
+  // {models}, {prompts} are substituted at render time when
+  // /api/benchmark data arrives. If the API fails or returns empty,
+  // the line disappears entirely (no fabricated fallback).
   heroFindingTemplate: string;
   heroStatsTemplate: string;
 
-  // CTA da home apontando pro /playground. Texto curto, em
-  // posição de "ação secundária" — a primária é entender o
-  // ranking; o playground vem depois, opcional.
+  // Home CTA pointing to /playground. Short text, "secondary action"
+  // role — the primary action is understanding the ranking; the
+  // playground comes second, optional.
   homePlaygroundCta: string;
   homePlaygroundHint: string;
   homeRankingCta: string;
 
-  // Playground page — header da rota /playground, eyebrow + tese
-  // do instrumento. Strings antigas (landingTry*) foram migradas
-  // pra cá com a separação editorial vs. ferramenta.
+  // Playground page — header of the /playground route, eyebrow +
+  // instrument thesis. The previous landingTry* strings were
+  // migrated here when the editorial vs. tool split happened.
   landingTryTitle: string;
   landingTrySubtitle: string;
   landingTryEyebrow: string;
   playgroundIntro: string;
 
-  // Newsletter / relatório (estado "em breve") — seção editorial
-  // entre os posts e o playground. Convite passivo: o usuário entende
-  // que pode acompanhar sem ser empurrado a uma ação imediata.
+  // Newsletter / report ("coming soon" state) — editorial slot
+  // between posts and the playground. Passive invitation: the user
+  // understands they can subscribe without being pushed into action.
   newsletterEyebrow: string;
   newsletterTitle: string;
   newsletterSubtitle: string;
@@ -223,7 +223,7 @@ interface UIStrings {
 }
 
 /*=========================================
-// Dicionarios
+// Dictionaries
 =========================================*/
 
 const PT: UIStrings = {
@@ -541,7 +541,7 @@ const EN: UIStrings = {
 };
 
 /*=========================================
-// Funcao de acesso
+// Accessor
 =========================================*/
 
 export function getStrings(lang: UILang): UIStrings {

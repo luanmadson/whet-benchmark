@@ -2,30 +2,33 @@
 /*=========================================
 // merge-retry.js
 //
-// Utilitário pós-retry. Quando um provider falha em N prompts numa
-// rodada full do benchmark (ex: Gemini hitando 429 depois do rate limit
-// diário), você roda o runner de novo *só* com aquele provider e os
-// prompts faltantes:
+// Post-retry utility. When a provider fails on N prompts during a
+// full benchmark run (e.g. Gemini hitting 429 after the daily rate
+// limit), you re-run the runner with *just* that provider and the
+// missing prompts:
 //
 //   node whorl/benchmark/runner.js --providers=gemini --prompts=p1,p2,p3
 //
-// Isso cria uma Run nova no results.json só com esses resultados. O
-// problema é que a API /api/benchmark e a página /whet-benchmark sempre
-// leem "a rodada mais recente" — então a Run nova, que tem só 1 provider
-// com alguns prompts, vira o novo default e *esconde* todos os outros
-// providers da Run anterior.
+// That creates a new Run in results.json containing only those
+// results. The problem: the /api/benchmark endpoint and the
+// /whet-benchmark page always read "the most recent run" — so the
+// new Run, which only has 1 provider with a handful of prompts,
+// becomes the new default and *hides* every other provider from
+// the previous Run.
 //
-// Este script resolve isso: pega a Run mais recente (a "retry"), mescla
-// seus resultados OK dentro da Run anterior (substituindo os errors que
-// batem com mesmo provider+promptId), e deleta a Run retry. Os erros
-// que permaneceram (porque o retry também falhou) ficam no lugar.
+// This script fixes that: it grabs the most recent Run (the
+// "retry"), merges its OK results into the previous Run (replacing
+// errors that match the same provider+promptId), and deletes the
+// retry Run. Errors that persisted (because the retry also failed)
+// stay where they were.
 //
-// Uso:
-//   node whorl/benchmark/merge-retry.js           # merge padrão (última → penúltima)
-//   node whorl/benchmark/merge-retry.js --dry-run # só mostra o que faria
+// Usage:
+//   node whorl/benchmark/merge-retry.js           # default merge (latest → previous)
+//   node whorl/benchmark/merge-retry.js --dry-run # only print what it would do
 //
-// Este script é cirúrgico. Não cria/perde informação — apenas move os
-// novos OKs pro lugar certo e descarta o wrapper da Run retry.
+// This script is surgical. It doesn't create or lose information —
+// it just moves the new OKs into the right place and discards the
+// retry Run wrapper.
 =========================================*/
 
 "use strict";
@@ -42,7 +45,7 @@ function main() {
   const file = JSON.parse(raw);
 
   if (!file.runs || file.runs.length < 2) {
-    console.error("erro: precisa de pelo menos 2 runs pra mesclar (a retry e a alvo).");
+    console.error("error: needs at least 2 runs to merge (the retry and the target).");
     process.exit(1);
   }
 
@@ -57,7 +60,7 @@ function main() {
   const retryErrs = retry.results.filter((r) => r.error);
 
   if (retryOks.length === 0) {
-    console.error("erro: retry não tem nenhum resultado OK pra mesclar. Cancelando.");
+    console.error("error: retry has no OK results to merge. Aborting.");
     process.exit(1);
   }
 
@@ -81,9 +84,9 @@ function main() {
       if (!dryRun) target.results[idx] = ok;
       replaced++;
     } else {
-      // Promise: o retry trouxe um OK pra um prompt que na target já estava OK.
-      // Pode acontecer se o usuário rodou com --prompts incluindo um que não era erro.
-      // Pula sem bagunçar o dado.
+      // Promise: the retry brought an OK for a prompt that was already OK
+      // in the target. Can happen if the user ran with --prompts including
+      // one that wasn't actually errored. Skip without messing with the data.
       plannedChanges.push({
         action: "skip",
         provider: ok.provider,
@@ -100,19 +103,19 @@ function main() {
       );
     } else {
       console.log(
-        `  ⚠    ${change.provider.padEnd(20)} ${change.promptId.padEnd(30)} (já estava OK na target — pulado)`,
+        `  ⚠    ${change.provider.padEnd(20)} ${change.promptId.padEnd(30)} (already OK in target — skipped)`,
       );
     }
   }
 
   console.log();
   console.log(
-    `${dryRun ? "[dry] " : ""}resumo: ${replaced} replaced, ${skipped} skipped, ${retryErrs.length} ainda com erro no retry`,
+    `${dryRun ? "[dry] " : ""}summary: ${replaced} replaced, ${skipped} skipped, ${retryErrs.length} still errored in retry`,
   );
 
   if (retryErrs.length > 0) {
     console.log();
-    console.log("prompts que continuaram errando no retry (vão permanecer errored na target):");
+    console.log("prompts that kept erroring in the retry (will remain errored in target):");
     for (const e of retryErrs) {
       console.log(`  ${e.provider.padEnd(20)} ${e.promptId.padEnd(30)} ${(e.error || "").slice(0, 60)}`);
     }
@@ -120,15 +123,15 @@ function main() {
 
   if (dryRun) {
     console.log();
-    console.log("dry-run: nenhuma mudança escrita.");
+    console.log("dry-run: no changes written.");
     return;
   }
 
-  // Remove a Run retry (já mesclada). Salva.
+  // Remove the (now-merged) retry Run. Save.
   file.runs.pop();
   fs.writeFileSync(RESULTS_PATH, JSON.stringify(file, null, 2));
   console.log();
-  console.log(`ok: ${replaced} entradas mescladas na target, Run retry removida. results.json atualizado.`);
+  console.log(`ok: ${replaced} entries merged into target, retry Run removed. results.json updated.`);
 }
 
 main();

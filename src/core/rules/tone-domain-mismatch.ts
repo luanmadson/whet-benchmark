@@ -1,23 +1,25 @@
 /**
- * Regra: tone-domain-mismatch
+ * Rule: tone-domain-mismatch
  *
- * Situação: prompts em domínios sensíveis (direito, saúde, finanças,
- * contabilidade/tributário) que pedem tom casual, informal, gírias ou emojis.
- * Em domínios onde o erro de comunicação tem custo real (compliance, risco
- * clínico, responsabilidade civil), tom casual tende a minar confiança,
- * disfarçar incertezas e facilitar mal-entendidos. A regra não proíbe —
- * sinaliza o conflito para que o autor do prompt decida conscientemente.
+ * Situation: prompts in sensitive domains (law, health, finance,
+ * accounting/tax) that ask for casual, informal, slangy, or emoji tone.
+ * In domains where communication errors have real cost (compliance,
+ * clinical risk, civil liability), a casual tone tends to undermine
+ * trust, mask uncertainty, and enable misunderstanding. The rule
+ * doesn't forbid — it flags the conflict so the prompt author can
+ * decide consciously.
  */
 
 import type { AnalysisContext, Diagnostic, Rule } from "../models";
 
 /*=========================================
-// Dominios sensiveis
+// Sensitive domains
 =========================================*/
 
-// Pares de padrões de domínio sensível + rótulo. Propositalmente mais restrito
-// do que a detecção genérica do renderer — aqui só entra domínio onde a
-// formalidade tem função (compliance, risco, responsabilidade).
+// Pairs of sensitive-domain patterns + label. Deliberately more
+// restrictive than the renderer's generic detection — only domains
+// where formality has a function (compliance, risk, accountability)
+// belong here.
 const SENSITIVE_DOMAINS: Array<{ pattern: RegExp; label: string; labelEn: string; labelEs: string }> = [
   {
     pattern: /\b(jurídi[co]|legislação|jurisprudência|advogad[oa]?|direito|CLT|rescisão|legal|law|attorney|statute|litigation|contract law|abogad[oa]|legislación|jurisprudencia|derecho)\b/i,
@@ -46,10 +48,10 @@ const SENSITIVE_DOMAINS: Array<{ pattern: RegExp; label: string; labelEn: string
 ];
 
 /*=========================================
-// Marcadores de tom casual
+// Casual-tone markers
 =========================================*/
 
-// Cada padrão corresponde a uma sinalização explícita de tom informal.
+// Each pattern corresponds to an explicit signal of informal tone.
 const CASUAL_TONE_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /\btom (casual|descontraíd[oa]|informal|relaxad[oa]|leve|divertid[oa])\b/i, label: "tom casual" },
   { pattern: /\bde forma (descontraíd[oa]|informal|casual|relaxad[oa])\b/i, label: "de forma descontraída" },
@@ -86,27 +88,27 @@ const CASUAL_TONE_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
 ];
 
 /*=========================================
-// Regra exportada
+// Exported rule
 =========================================*/
 
 export const toneDomainMismatch: Rule = {
   name: "tone-domain-mismatch",
   description:
-    "Tom casual pedido explicitamente em domínio sensível (jurídico, " +
-    "saúde, finanças, contábil) onde formalidade tem função — compliance, " +
-    "risco clínico, responsabilidade — e informalidade tende a minar confiança",
+    "Casual tone explicitly requested in a sensitive domain (legal, health, " +
+    "finance, accounting) where formality has a function — compliance, " +
+    "clinical risk, accountability — and informality tends to undermine trust",
   severity: "warning",
 
   analyze(text: string, ctx: AnalysisContext): Diagnostic[] {
     const diagnostics: Diagnostic[] = [];
     const lang = ctx.lang;
 
-    // 1. Identifica o domínio sensível, se houver
+    // 1. Identify the sensitive domain, if any
     const domainMatch = SENSITIVE_DOMAINS.find((d) => d.pattern.test(text));
     if (!domainMatch) return diagnostics;
     const domainLabel = lang === "en" ? domainMatch.labelEn : lang === "es" ? domainMatch.labelEs : domainMatch.label;
 
-    // 2. Para cada sentença, procura marcador de tom casual
+    // 2. For each statement, look for a casual-tone marker
     const statements = ctx.statements;
     for (const stmt of statements) {
       for (const { pattern, label } of CASUAL_TONE_PATTERNS) {

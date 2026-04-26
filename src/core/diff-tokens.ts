@@ -1,15 +1,15 @@
 /**
- * Diff token-a-token para o before/after do card de diagnóstico.
+ * Token-by-token diff for the before/after of the diagnostic card.
  *
- * Entrada: duas strings (`before` e `after`). Saída: sequência de operações
- * `{ type: 'equal' | 'removed' | 'added', text }` que pode ser renderizada
- * como diff inline estilo `git diff` ou Biome `--write`. A ideia é que o
- * usuário veja exatamente quais tokens saem, entram e permanecem quando
- * a regra sugere uma reformulação.
+ * Input: two strings (`before` and `after`). Output: a sequence of
+ * `{ type: 'equal' | 'removed' | 'added', text }` ops that can be
+ * rendered as an inline diff in the style of `git diff` or Biome
+ * `--write`. The point is that the user sees exactly which tokens
+ * leave, enter, and stay when a rule suggests a rewrite.
  *
- * O algoritmo é LCS (longest common subsequence) no nível de token: palavras,
- * runs de whitespace e pontuação isolada são tokens próprios. Puro — nenhuma
- * dependência de React/DOM.
+ * The algorithm is LCS (longest common subsequence) at the token
+ * level: words, whitespace runs, and isolated punctuation are each
+ * their own tokens. Pure — no React/DOM dependency.
  */
 
 export type DiffOp = {
@@ -18,11 +18,11 @@ export type DiffOp = {
 };
 
 /**
- * Tokeniza preservando separadores. Cada token é:
- *   — uma sequência de letras/dígitos/underscore (Unicode-aware, cobre acentos PT/EN/ES)
- *   — uma sequência de whitespace
- *   — um único caractere de pontuação/símbolo
- * A soma dos tokens reconstrói exatamente a string original.
+ * Tokenize preserving separators. A token is one of:
+ *   — a run of letters/digits/underscore (Unicode-aware, covers PT/EN/ES accents)
+ *   — a run of whitespace
+ *   — a single punctuation/symbol character
+ * The concatenation of tokens reconstructs the original string exactly.
  */
 export function tokenize(s: string): string[] {
   const out = s.match(/\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu);
@@ -30,8 +30,8 @@ export function tokenize(s: string): string[] {
 }
 
 /**
- * Computa o diff em nível de token entre `before` e `after` via LCS.
- * Ops consecutivos do mesmo tipo são coalescidos pra reduzir fragmentação.
+ * Computes a token-level diff between `before` and `after` via LCS.
+ * Consecutive ops of the same type are coalesced to reduce fragmentation.
  */
 export function diffTokens(before: string, after: string): DiffOp[] {
   const a = tokenize(before);
@@ -69,7 +69,7 @@ export function diffTokens(before: string, after: string): DiffOp[] {
   while (i < n) ops.push({ type: "removed", text: a[i++] });
   while (j < m) ops.push({ type: "added", text: b[j++] });
 
-  // Coalesce consecutivos do mesmo tipo
+  // Coalesce consecutive ops of the same type
   const merged: DiffOp[] = [];
   for (const op of ops) {
     const last = merged[merged.length - 1];

@@ -1,8 +1,8 @@
 //=========================================
-// Provider: Cohere Command A (trial 1000 req/mês, sem cartão)
+// Provider: Cohere Command A (1000 req/month trial, no credit card)
 //
-// Autenticação: COHERE_API_KEY no .env.local ou env do processo.
-// Obter chave: https://dashboard.cohere.com → API Keys (trial criada auto no signup)
+// Auth: COHERE_API_KEY in .env.local or process env.
+// Get a key: https://dashboard.cohere.com → API Keys (trial created automatically on signup)
 // Docs: https://docs.cohere.com/v2/docs/chat-api (Chat API v2)
 //=========================================
 
@@ -41,8 +41,8 @@ async function submitOnce(fullPrompt, apiKey) {
   });
 }
 
-// Cohere v2 devolve { message: { role, content: [{ type: "text", text }] } }
-// ou { text } em casos legados. Cobrimos ambos.
+// Cohere v2 returns { message: { role, content: [{ type: "text", text }] } }
+// or { text } in legacy cases. We cover both.
 function extractText(data) {
   if (typeof data?.text === "string" && data.text.length > 0) return data.text;
   const content = Array.isArray(data?.message?.content) ? data.message.content : [];
@@ -55,7 +55,7 @@ function extractText(data) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("COHERE_API_KEY ausente");
+  if (!apiKey) throw new Error("COHERE_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -64,7 +64,7 @@ async function submit(fullPrompt) {
     if (response.ok) {
       const data = await response.json();
       const text = extractText(data);
-      if (!text) throw new Error(`Cohere retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+      if (!text) throw new Error(`Cohere returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
       return text.trim();
     }
 
@@ -83,7 +83,7 @@ async function submit(fullPrompt) {
     break;
   }
 
-  throw lastError || new Error("Cohere: falha após retries");
+  throw lastError || new Error("Cohere: failed after retries");
 }
 
 module.exports = {
@@ -91,8 +91,8 @@ module.exports = {
   displayName: "Command A (Cohere)",
   model: MODEL,
   tier: "trial",
-  origin: "Cohere (Canadá)",
-  description: "Filosofia de alinhamento focada em RAG/grounded generation/tool use — testa meta-prompt-following sob viés distinto",
+  origin: "Cohere (Canada)",
+  description: "Alignment philosophy focused on RAG/grounded generation/tool use — tests meta-prompt-following under a different bias",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };

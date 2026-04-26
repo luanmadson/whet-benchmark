@@ -1,8 +1,8 @@
 //=========================================
 // Provider: Mistral (free tier via La Plateforme)
 //
-// Autenticação: MISTRAL_API_KEY no .env.local ou env do processo.
-// Obter chave: https://console.mistral.ai/api-keys/ (free tier "Experiment")
+// Auth: MISTRAL_API_KEY in .env.local or process env.
+// Get a key: https://console.mistral.ai/api-keys/ (free tier "Experiment")
 // Docs: https://docs.mistral.ai/api/
 //=========================================
 
@@ -17,7 +17,7 @@ function getApiKey() {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("MISTRAL_API_KEY ausente");
+  if (!apiKey) throw new Error("MISTRAL_API_KEY missing");
 
   const body = {
     model: MODEL,
@@ -42,7 +42,7 @@ async function submit(fullPrompt) {
 
   const data = await response.json();
   const text = data?.choices?.[0]?.message?.content;
-  if (!text) throw new Error(`Mistral retornou resposta sem texto: ${JSON.stringify(data).slice(0, 300)}`);
+  if (!text) throw new Error(`Mistral returned response with no text: ${JSON.stringify(data).slice(0, 300)}`);
   return text.trim();
 }
 
@@ -51,8 +51,8 @@ module.exports = {
   displayName: "Mistral Small",
   model: MODEL,
   tier: "free",
-  origin: "Mistral AI (França)",
-  description: "Modelo europeu open-weight focado em eficiência",
+  origin: "Mistral AI (France)",
+  description: "European open-weight model focused on efficiency",
   isAvailable: () => Boolean(getApiKey()),
   submit,
 };
