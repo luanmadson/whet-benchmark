@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-// Wrapper CJS fino — redireciona para o bundle compilado do CLI.
-// Ao instalar o pacote globalmente, este arquivo fica no PATH do usuário.
-// Separamos em dois porque o TS compila `dist/` inteiro, e ter o bin
-// apontando direto pra `dist/cli/index.js` criaria um arquivo executável
-// versionado no repo, o que é mais inconveniente pra checks de linter.
+// Thin CJS wrapper — redirects to the compiled CLI bundle.
+// When the package is installed globally, this file lands on the
+// user's PATH. We keep the wrapper separate because TS compiles
+// the whole `dist/` tree, and pointing the bin straight at
+// `dist/cli/index.js` would mean a versioned executable in the
+// repo, which is more awkward for linter checks.
 require("../dist/cli/index.js");
