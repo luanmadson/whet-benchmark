@@ -1,7 +1,7 @@
 //=========================================
 // Provider: xAI Grok 4.20 reasoning
 //
-// Auth: XAI_API_KEY in .env.local or process env.
+// Auth: XAI_API_KEY (canonical) or GROK_API_KEY (fallback) in .env.local or process env.
 // Get a key: https://console.x.ai → API Keys
 // Access: xAI discontinued the automatic trial. To use without a
 // top-up, enable "Data Sharing for Credits" under Team Settings → Data Controls.
@@ -13,8 +13,10 @@
 const MODEL = "grok-4.20-reasoning";
 const ENDPOINT = "https://api.x.ai/v1/responses";
 
+// Accept both XAI_API_KEY (canonical, what xAI's docs use) and GROK_API_KEY
+// (intuitive alias many users actually set). Canonical wins if both exist.
 function getApiKey() {
-  return process.env.XAI_API_KEY;
+  return process.env.XAI_API_KEY || process.env.GROK_API_KEY;
 }
 
 const MAX_RETRIES = 3;
@@ -62,7 +64,7 @@ function extractText(data) {
 
 async function submit(fullPrompt) {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("XAI_API_KEY missing");
+  if (!apiKey) throw new Error("XAI_API_KEY or GROK_API_KEY missing");
 
   let lastError = null;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {

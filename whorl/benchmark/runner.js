@@ -66,7 +66,7 @@ const providers = [
   require("./providers/openai-gpt-5-4"),
   require("./providers/openai-gpt-5-5"),
   require("./providers/openai-gpt-5-nano"),
-  // require("./providers/grok"), // standby until Data Sharing is enabled ($5 top-up + opt-in) — see PROVIDERS-BACKLOG.md
+  require("./providers/grok"),
 ];
 
 // Lightweight CLI flag parser

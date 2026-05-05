@@ -10,7 +10,7 @@ The Whet Benchmark measures **meta-prompt-following under pressure to preserve i
 
 Already in the corpus: Gemini (Google), Mistral (Mistral), Llama 3.3 70B (Meta via Groq), **Claude Opus 4.7 + Sonnet (Anthropic via CLI)**, DeepSeek V3 + R1 (DeepSeek), Jamba Large 1.7 (AI21), Command A (Cohere), GPT-4o mini + GPT-5.4 + GPT-5.5 + GPT-5 nano (OpenAI). 8 families (4 OpenAI models to compare generations and tiers), all Western except DeepSeek.
 
-In standby: **Grok 4.20 Reasoning (xAI)** — provider implemented and tested, but waiting on the Data Sharing opt-in decision (see Tier 1 below).
+In standby: *(none — Grok was promoted to integrated in May 2026)*.
 
 > **DeepSeek V3 + R1 integrated** (April 2026, Run 9). The backlog hypothesis was tested: *does reasoning help or hurt on a mechanical rewrite task?* → **almost indifferent**. R1 delivered an average delta of +40.6 against V3's +39.7 — a roughly 1-point edge at ~2.6× the cost per call (reasoning_content eats into the output budget). Signal: for this specific task, reasoning isn't worth the cost.
 >
@@ -23,18 +23,14 @@ In standby: **Grok 4.20 Reasoning (xAI)** — provider implemented and tested, b
 ### ~~AI21 Jamba (Large + Mini)~~ ✅ integrated (April 2026)
 - Provider `ai21.js` created, registered in the runner. Model `jamba-large-1.7`, endpoint `api.ai21.com/studio/v1/chat/completions`. Env var: `AI21_API_KEY`.
 
-### xAI Grok ⏸️ standby (April 2026)
-- Provider `grok.js` implemented (model `grok-4.20-reasoning`, endpoint `api.x.ai/v1/responses` — Responses API, shape `{ model, input }`, not OpenAI-compatible). Env var: `XAI_API_KEY`.
-- **Unregistered from the runner** (commented line in `runner.js`). To re-enable: uncomment `require("./providers/grok")`.
-- Hypothesis to validate when running: less restrictive alignment → better preservation of the rewrite meta-instruction (less RLHF-driven instinct to "soften" the original prompt).
-- **Automatic trial no longer exists.** The "$25 in trial credits, no card" line in this backlog **is outdated**. New accounts start with zero credit and the first call returns `HTTP 403 "team doesn't have credits or licenses"`.
-- **Unblock path (Data Sharing for Credits).** `console.x.ai` → Settings → Data Sharing → toggle "Share API Inputs for Model Training". Unlocks $150/month in renewable credits. Prerequisites:
-  - **Minimum $5 top-up** on the account before the toggle becomes eligible (one-shot, not recurring).
-  - Only team admins can activate it.
-  - **Irreversible** decision: once opted in, no opt-out.
-  - Eligible countries (Brazil generally is, confirm in the toggle itself).
-- **Editorial trade-off:** acceptable for the corpus (corpus prompts are already public in `results.json`), so data sharing doesn't compromise anything that isn't already committed. $5 one-shot unlocks hundreds of full runs per month.
-- **Decision deferred** in April 2026 — pending a call on top-up + opt-in.
+### ~~xAI Grok 4.20 Reasoning~~ ✅ integrated (May 2026)
+
+- Provider `grok.js` activated. Model `grok-4.20-reasoning`, endpoint `api.x.ai/v1/responses` (Responses API, shape `{ model, input }` — not OpenAI-compatible). Env var: `XAI_API_KEY` (canonical) or `GROK_API_KEY` (fallback alias accepted to reduce friction).
+- **Unblock path used:** direct $5 minimum top-up at `console.x.ai`. The Data Sharing for Credits opt-in (originally noted as a free path) wasn't necessary — paid was simpler and avoided the irreversible opt-in commitment. Real-world cost of the 62-prompt backfill: well under $1 with reasoning model pricing.
+- **Full backfill (May 2026, 62/62 prompts)**: equal-footing entry against every prompt 5.5/5.4 had been run on. Reconstructed historical corpus from `results.json` (each run carries its prompts inline) and ran the existing runner with `--providers=xai-grok`. Zero errors.
+- **Result**: cumulative average Δ of **+48.6** (43.4 → 92.0 over 62 prompts). **Position 4/14** on the cumulative leaderboard — top 5, ahead of GPT-5.5 (+47.3), GPT-5.4 (+47.0) and every cheaper or older-generation model in the corpus. Behind only the Claude trio + Jamba (+50.4 to +50.6).
+- **Editorial finding:** hypothesis partially confirmed. Less restrictive alignment + reasoning *did* improve meta-prompt-following past the GPT-5 family — but didn't beat the proprietary flagships from Anthropic / AI21. Suggests two distinct axes: alignment looseness gets you over the OpenAI ceiling, but climbing past Claude/Jamba seems to require something else (instruction-following depth? base model capability?). Both axes matter.
+- **Operational note:** average latency ~17s per call (10-25s range). Higher than non-reasoning models, lower than DeepSeek R1.
 
 ## Tier 2 — fill gaps with smaller marginal return
 
@@ -113,7 +109,7 @@ Second movement of the OpenAI integration, done the day after the 5.5 launch (20
 ## Suggested execution order
 
 1. ~~**AI21 Jamba**~~ — integrated
-2. **xAI Grok** — ⏸️ standby (implemented but unregistered; awaits $5 top-up + Data Sharing opt-in)
+2. ~~**xAI Grok**~~ — ✅ integrated (May 2026, $5 direct top-up)
 3. ~~**Cohere**~~ — integrated
 4. ~~**OpenAI GPT-4o-mini**~~ — integrated (pay-as-you-go, $5 top-up)
 5. **Qwen3** — reinforces the Chinese cluster, 90-day free tier
