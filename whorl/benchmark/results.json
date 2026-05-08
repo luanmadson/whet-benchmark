@@ -8,7 +8,7 @@
       "results": [
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "agente-codigo-rigido",
@@ -493,7 +493,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "consultor-juridico",
@@ -512,7 +512,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "assistente-medico",
@@ -531,7 +531,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "estrategista-marketing",
@@ -550,7 +550,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "agente-codigo-rigido",
@@ -569,7 +569,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "repeticoes-disfarcadas",
@@ -588,7 +588,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "legal-advisor-en",
@@ -607,7 +607,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "financial-analyst-en",
@@ -1162,7 +1162,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "consultor-juridico",
@@ -1181,7 +1181,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "assistente-medico",
@@ -1200,7 +1200,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "estrategista-marketing",
@@ -1219,7 +1219,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "agente-codigo-rigido",
@@ -1238,7 +1238,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "repeticoes-disfarcadas",
@@ -1257,7 +1257,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "legal-advisor-en",
@@ -1276,7 +1276,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "financial-analyst-en",
@@ -1701,7 +1701,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "consultor-juridico",
@@ -1720,7 +1720,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "assistente-medico",
@@ -1739,7 +1739,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "estrategista-marketing",
@@ -1758,7 +1758,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "agente-codigo-rigido",
@@ -1777,7 +1777,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "repeticoes-disfarcadas",
@@ -1796,7 +1796,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "legal-advisor-en",
@@ -1815,7 +1815,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "financial-analyst-en",
@@ -3976,7 +3976,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "legal-advisor-pt",
@@ -3995,7 +3995,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "legal-advisor-en",
@@ -4014,7 +4014,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "legal-advisor-es",
@@ -4033,7 +4033,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "medical-assistant-pt",
@@ -4052,7 +4052,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "medical-assistant-en",
@@ -4071,7 +4071,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "medical-assistant-es",
@@ -4090,7 +4090,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "marketing-strategist-pt",
@@ -4109,7 +4109,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "marketing-strategist-en",
@@ -4128,7 +4128,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "marketing-strategist-es",
@@ -4147,7 +4147,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "rigid-code-agent-pt",
@@ -4166,7 +4166,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "rigid-code-agent-en",
@@ -4185,7 +4185,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "rigid-code-agent-es",
@@ -4204,7 +4204,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "disguised-repetitions-pt",
@@ -4223,7 +4223,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "disguised-repetitions-en",
@@ -4242,7 +4242,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "disguised-repetitions-es",
@@ -4261,7 +4261,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "financial-analyst-pt",
@@ -4280,7 +4280,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "financial-analyst-en",
@@ -4299,7 +4299,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "financial-analyst-es",
@@ -4318,7 +4318,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "threat-framing-pt",
@@ -4337,7 +4337,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "threat-framing-en",
@@ -4356,7 +4356,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "threat-framing-es",
@@ -4375,7 +4375,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "role-inflation-pt",
@@ -4394,7 +4394,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "role-inflation-en",
@@ -4413,7 +4413,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "role-inflation-es",
@@ -4432,7 +4432,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "tone-domain-mismatch-pt",
@@ -4451,7 +4451,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "tone-domain-mismatch-en",
@@ -4470,7 +4470,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "tone-domain-mismatch-es",
@@ -4489,7 +4489,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "contradiction-pt",
@@ -4508,7 +4508,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "contradiction-en",
@@ -4527,7 +4527,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "contradiction-es",
@@ -4546,7 +4546,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "unresolved-reference-pt",
@@ -4565,7 +4565,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "unresolved-reference-en",
@@ -4584,7 +4584,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "unresolved-reference-es",
@@ -4603,7 +4603,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "task-style-no-roleplay-pt",
@@ -4622,7 +4622,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "task-style-no-roleplay-en",
@@ -4641,7 +4641,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "task-style-no-roleplay-es",
@@ -7222,7 +7222,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "education-tutor-pt",
@@ -7241,7 +7241,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "education-tutor-en",
@@ -7260,7 +7260,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "education-tutor-es",
@@ -7279,7 +7279,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "logistics-optimizer-pt",
@@ -7298,7 +7298,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "logistics-optimizer-en",
@@ -7317,7 +7317,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "logistics-optimizer-es",
@@ -7336,7 +7336,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "tax-consultant-pt",
@@ -7355,7 +7355,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "tax-consultant-en",
@@ -7374,7 +7374,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "tax-consultant-es",
@@ -8510,7 +8510,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "consultor-juridico",
@@ -8529,7 +8529,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "assistente-medico",
@@ -8548,7 +8548,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "estrategista-marketing",
@@ -8567,7 +8567,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "agente-codigo-rigido",
@@ -8586,7 +8586,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-6 (via CLI)",
           "tier": "paid",
           "promptId": "repeticoes-disfarcadas",
@@ -14158,7 +14158,7 @@
       "results": [
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14382,7 +14382,7 @@
       "results": [
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14401,7 +14401,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14420,7 +14420,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14439,7 +14439,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14458,7 +14458,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14477,7 +14477,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14496,7 +14496,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14515,7 +14515,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14534,7 +14534,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14553,7 +14553,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14572,7 +14572,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14591,7 +14591,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14610,7 +14610,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14629,7 +14629,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14648,7 +14648,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14667,7 +14667,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14686,7 +14686,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14705,7 +14705,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14724,7 +14724,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14743,7 +14743,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14762,7 +14762,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14781,7 +14781,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14800,7 +14800,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14819,7 +14819,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14838,7 +14838,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14857,7 +14857,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14876,7 +14876,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14895,7 +14895,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14914,7 +14914,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14933,7 +14933,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14952,7 +14952,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14971,7 +14971,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -14990,7 +14990,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15009,7 +15009,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15028,7 +15028,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15047,7 +15047,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15066,7 +15066,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15085,7 +15085,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15104,7 +15104,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15123,7 +15123,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15142,7 +15142,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15161,7 +15161,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15180,7 +15180,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15199,7 +15199,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15218,7 +15218,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15237,7 +15237,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15256,7 +15256,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15275,7 +15275,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -15294,7 +15294,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16510,7 +16510,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16529,7 +16529,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16548,7 +16548,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16567,7 +16567,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16586,7 +16586,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16605,7 +16605,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16624,7 +16624,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16643,7 +16643,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16662,7 +16662,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16681,7 +16681,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16700,7 +16700,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -16719,7 +16719,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (EUA)",
@@ -22173,7 +22173,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22192,7 +22192,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22211,7 +22211,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22230,7 +22230,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22249,7 +22249,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22268,7 +22268,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22287,7 +22287,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22306,7 +22306,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22325,7 +22325,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22344,7 +22344,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22363,7 +22363,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",
@@ -22382,7 +22382,7 @@
         },
         {
           "provider": "claude-cli",
-          "displayName": "Claude (via CLI)",
+          "displayName": "Claude Opus (via CLI)",
           "model": "claude-opus-4-7 (via CLI)",
           "tier": "paid",
           "origin": "Anthropic (USA)",

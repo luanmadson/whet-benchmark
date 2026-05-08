@@ -74,7 +74,7 @@ function isAvailable() {
 
 module.exports = {
   name: "claude-cli",
-  displayName: "Claude (via CLI)",
+  displayName: "Claude Opus (via CLI)",
   model: MODEL,
   tier: "paid",
   origin: "Anthropic (USA)",
